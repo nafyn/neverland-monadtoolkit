@@ -256,62 +256,67 @@ document.getElementById("share-btn").onclick = () => {
 
 document.getElementById("share-btn").onclick = shareCard;
 
+document.getElementById("share-btn").onclick = shareCard;
+
 async function shareCard() {
   const card = document.getElementById("result-card");
-  const overlay = document.getElementById("copied-overlay");
   const mobileScreen = document.getElementById("mobile-save-screen");
   const mobileImage = document.getElementById("mobile-save-image");
   const closeBtn = document.getElementById("mobile-close");
-
   const isMobile = /iPhone|iPad|Android/i.test(navigator.userAgent);
 
-  // → Sur mobile : pas de sticky manipulation (moins de risques de décalage)
-  if (!isMobile) card.classList.remove("sticky");
-
-  const canvas = await html2canvas(card, { backgroundColor: null, scale: 2 });
-
-  if (!isMobile) card.classList.add("sticky");
-
-  const dataUrl = canvas.toDataURL("image/png");
-
   const tweetText = `this is my Monad Mainnet Toolkit. day 1 is gonna be a movie ✦
-make yours here: https://nafyn.github.io/neverland-monadtoolkit/index.html`;
+\n make yours here: https://nafyn.github.io/neverland-monadtoolkit/index.html`;
 
   const tweetUrl = "https://twitter.com/intent/tweet?text=" + encodeURIComponent(tweetText);
 
-  // 📱 MOBILE FLOW (NO SHARE SHEET)
-  if (isMobile) {
-    // 1) Twitter d’abord (doit être dans le contexte du clic pour ne pas être bloqué)
+  // === DESKTOP ===
+  if (!isMobile) {
+    // remove sticky to avoid crop
+    card.classList.remove("sticky");
+    const canvas = await html2canvas(card, { backgroundColor: null, scale: 2 });
+    card.classList.add("sticky");
+
+    const dataUrl = canvas.toDataURL("image/png");
+    try {
+      const cleanBlob = await (await fetch(dataUrl)).blob();
+      await navigator.clipboard.write([new ClipboardItem({ "image/png": cleanBlob })]);
+    } catch (err) {
+      console.warn("Clipboard copy blocked:", err);
+    }
+
+    document.getElementById("copied-overlay").style.opacity = 1;
+    setTimeout(() => document.getElementById("copied-overlay").style.opacity = 0, 900);
     window.open(tweetUrl, "_blank");
-
-    // 2) On affiche la carte à enregistrer
-    mobileImage.src = dataUrl;
-    mobileScreen.classList.remove("hidden");
-
-    // 3) Bouton retour
-    closeBtn.onclick = () => {
-      mobileScreen.classList.add("hidden");
-    };
-
     return;
   }
 
-  // 💻 DESKTOP FLOW
-  try {
-    const cleanBlob = await (await fetch(dataUrl)).blob();
+  // === MOBILE ===
 
-    await navigator.clipboard.write([
-      new ClipboardItem({ "image/png": cleanBlob })
-    ]);
+  // 1) Clone card & remove Twitter button
+  const clone = card.cloneNode(true);
+  clone.style.position = "absolute";
+  clone.style.left = "-9999px"; // offscreen render
+  document.body.appendChild(clone);
 
-    overlay.style.opacity = 1;
-    setTimeout(() => overlay.style.opacity = 0, 900);
+  const shareBtnClone = clone.querySelector("#share-btn");
+  if (shareBtnClone) shareBtnClone.remove();
 
-  } catch (err) {
-    console.warn("Desktop clipboard copy failed → skipping copy", err);
-  }
+  // 2) Screenshot the clone
+  const canvas = await html2canvas(clone, { backgroundColor: null, scale: 2 });
+  document.body.removeChild(clone);
 
-  window.open(tweetUrl, "_blank");
+  const dataUrl = canvas.toDataURL("image/png");
+
+  // 3) Display fullscreen save UI
+  mobileImage.src = dataUrl;
+  mobileScreen.classList.remove("hidden");
+
+  // 4) When user clicks Done → THEN open Twitter
+  closeBtn.onclick = () => {
+    mobileScreen.classList.add("hidden");
+    window.open(tweetUrl, "_blank");
+  };
 }
 
 document.getElementById("share-btn").onclick = shareCard;
