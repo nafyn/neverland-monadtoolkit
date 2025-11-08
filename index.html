@@ -134,23 +134,23 @@ Object.entries(groups).forEach(([groupName, categories]) => {
   const isOpen = openGroup === groupName;
 
   const groupBlock = document.createElement("div");
-  groupBlock.className = `
-    rounded-xl bg-white/5 border border-white/10 backdrop-blur transition-all overflow-hidden
-    ${isOpen ? "p-4 space-y-3" : "p-3 opacity-70 hover:opacity-100 cursor-pointer"}
-  `;
+  groupBlock.className = "rounded-xl bg-white/5 border border-white/10 backdrop-blur transition-all";
 
   // header
   const header = document.createElement("div");
-  header.className = "flex justify-between items-center";
+  header.className = "flex justify-between items-center p-4 cursor-pointer select-none";
   header.innerHTML = `
     <h2 class="text-2xl font-semibold">${groupName}</h2>
-    <span class="text-sm text-white/60">${isOpen ? "▲" : "▼"}</span>
+    <span class="transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}">▼</span>
   `;
   header.onclick = () => { openGroup = groupName; render(); };
   groupBlock.appendChild(header);
 
+  // only show the inner content when open
   if (isOpen) {
-    // inner categories
+    const inner = document.createElement("div");
+    inner.className = "p-4 space-y-4 border-t border-white/10";
+
     Object.entries(categories).forEach(([category, options]) => {
       const section = document.createElement("div");
       section.className = "space-y-2";
@@ -176,8 +176,10 @@ Object.entries(groups).forEach(([groupName, categories]) => {
         buttons.appendChild(btn);
       });
 
-      groupBlock.appendChild(section);
+      inner.appendChild(section);
     });
+
+    groupBlock.appendChild(inner);
   }
 
   app.appendChild(groupBlock);
