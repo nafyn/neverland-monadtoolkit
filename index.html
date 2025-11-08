@@ -245,6 +245,25 @@ function updateCard() {
 
   resultContent.innerHTML = html;
   resultCard.classList.remove("hidden");
+
+  // ✅ Harmonisation desktop visible (pas la capture)
+  if (!isMobile()) {
+    resultCard.style.paddingTop = "32px";
+    resultCard.style.paddingBottom = "28px";
+
+    document.querySelectorAll("#result-content > div").forEach(row => {
+      row.style.marginBottom = "6px";
+    });
+
+    document.querySelectorAll("#result-content span:first-child").forEach(span => {
+      span.style.opacity = "0.75";
+      span.style.letterSpacing = "0.2px";
+      span.style.paddingRight = "12px";
+    });
+
+    const powered = document.getElementById("powered-card");
+    if (powered) powered.style.marginTop = "26px";
+  }
 }
 
 function autoAdvanceIfComplete(currentGroup, categories) {
