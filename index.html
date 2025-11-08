@@ -352,6 +352,61 @@ clone.appendChild(poweredClone);
   
 }
 
+// === DESKTOP BEHAVIOR ===
+// Click card → copy image → open Twitter
+if (!/iPhone|iPad|Android/i.test(navigator.userAgent)) {
+
+  // Masquer le bouton sur desktop
+  document.getElementById("share-btn").classList.add("hidden");
+
+  resultCard.addEventListener("click", async () => {
+    const tweetText = `this is my Monad Mainnet Toolkit. day 1 is gonna be a movie ✦
+make yours here: https://nafyn.github.io/neverland-monadtoolkit/index.html`;
+    const tweetUrl = "https://twitter.com/intent/tweet?text=" + encodeURIComponent(tweetText);
+
+    // Clone la carte proprement
+    const clone = resultCard.cloneNode(true);
+    clone.querySelector("#share-btn")?.remove(); 
+    clone.querySelector("#powered-card")?.remove();
+
+    // Re-injecte le "Powered by"
+    const poweredExport = document.createElement("p");
+    poweredExport.textContent = "Powered by Neverland ✦";
+    poweredExport.style.fontSize = "11px";
+    poweredExport.style.color = "rgba(255,255,255,0.55)";
+    poweredExport.style.textAlign = "right";
+    poweredExport.style.marginTop = "10px";
+    clone.appendChild(poweredExport);
+
+    // Wrapper off-screen fond violet correct
+    const wrapper = document.createElement("div");
+    wrapper.style.position = "absolute";
+    wrapper.style.left = "-99999px";
+    wrapper.style.top = "0";
+    wrapper.style.padding = "40px";
+    wrapper.style.background = "radial-gradient(circle at top, #3B1477, #0C021F 70%)";
+    wrapper.style.display = "flex";
+    wrapper.style.justifyContent = "center";
+    wrapper.style.alignItems = "center";
+    clone.style.width = "450px";
+    clone.style.borderRadius = "20px";
+    wrapper.appendChild(clone);
+    document.body.appendChild(wrapper);
+
+    const canvas = await html2canvas(wrapper, {
+      backgroundColor: null,
+      scale: window.devicePixelRatio * 1.8
+    });
+
+    document.body.removeChild(wrapper);
+
+    const blob = await new Promise(resolve => canvas.toBlob(resolve, "image/png"));
+    await navigator.clipboard.write([new ClipboardItem({ "image/png": blob })]);
+
+    window.open(tweetUrl, "_blank");
+  });
+}  
+
 render();
 </script>
 
