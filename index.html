@@ -32,7 +32,7 @@
   <div class="grid grid-cols-1 md:grid-cols-3 gap-10">
     <div id="app" class="md:col-span-2 space-y-8"></div>
 
-    <div id="result-card" class="h-fit sticky top-10 p-4 rounded-xl bg-white/5 border border-white/10 backdrop-blur shadow-lg hidden">
+    <div id="result-card" class="h-fit sticky top-10 p-4 rounded-xl bg-white/5 border border-white/10 backdrop-blur shadow-lg hidden cursor-pointer">
   <h3 class="text-lg font-semibold mb-2 text-center">My Toolkit</h3>
   <p class="text-sm text-white/70 text-center mb-4">~ on Mainnet Day 1 ~</p>
 
@@ -254,6 +254,60 @@ function autoAdvanceIfComplete(currentGroup, categories) {
 }
   
 document.getElementById("share-btn").onclick = shareCard;
+
+  // === DESKTOP CLICK → COPY IMAGE + OPEN TWITTER ===
+if (!isMobile()) {
+  const shareBtn = document.getElementById("share-btn");
+  shareBtn.classList.add("hidden"); // hide button desktop
+
+  resultCard.addEventListener("click", async () => {
+    const tweetText = `this is my Monad Mainnet Toolkit. day 1 is gonna be a movie ✦
+make yours here: https://nafyn.github.io/neverland-monadtoolkit/index.html`;
+    const tweetUrl = "https://twitter.com/intent/tweet?text=" + encodeURIComponent(tweetText);
+
+    // clone
+    const clone = resultCard.cloneNode(true);
+    clone.querySelector("#share-btn")?.remove();
+    clone.querySelector("#powered-card")?.remove();
+
+    // add powered
+    const poweredClone = document.createElement("p");
+    poweredClone.textContent = "Powered by Neverland ✦";
+    poweredClone.style.fontSize = "12px";
+    poweredClone.style.color = "rgba(255,255,255,0.55)";
+    poweredClone.style.textAlign = "right";
+    poweredClone.style.marginTop = "10px";
+    clone.appendChild(poweredClone);
+
+    // wrap
+    const wrap = document.createElement("div");
+    wrap.style.position = "absolute";
+    wrap.style.left = "-99999px";
+    wrap.style.top = "0";
+    wrap.style.background = "radial-gradient(circle at top, #3B1477, #0C021F 70%)";
+    wrap.style.padding = "40px";
+    wrap.appendChild(clone);
+    document.body.appendChild(wrap);
+
+    const canvas = await html2canvas(wrap, {
+      backgroundColor: null,
+      scale: window.devicePixelRatio * 2
+    });
+
+    document.body.removeChild(wrap);
+
+    const blob = await new Promise(res => canvas.toBlob(res, "image/png"));
+    await navigator.clipboard.write([new ClipboardItem({ "image/png": blob })]);
+
+    // open twitter ✦
+    window.open(tweetUrl, "_blank");
+
+    // feedback ✦
+    const overlay = document.getElementById("copied-overlay");
+    overlay.style.opacity = 1;
+    setTimeout(() => (overlay.style.opacity = 0), 900);
+  });
+}
 
 async function shareCard() {
   const card = document.getElementById("result-card");
