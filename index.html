@@ -29,10 +29,10 @@
 
 <div class="w-full max-w-5xl mx-auto space-y-4 mt-10 px-4">
 
-  <div class="grid grid-cols-1 md:grid-cols-3 gap-10 items-start">
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-10">
     <div id="app" class="md:col-span-2 space-y-8"></div>
 
-    <div id="result-card" class="hidden md:sticky md:top-10 p-4 rounded-xl bg-white/5 border border-white/10 backdrop-blur shadow-lg mx-auto md:max-w-xl md:col-span-1">
+    <div id="result-card" class="h-fit sticky top-10 p-4 rounded-xl bg-white/5 border border-white/10 backdrop-blur shadow-lg hidden">
   <h3 class="text-lg font-semibold mb-2 text-center">My Toolkit</h3>
   <p class="text-sm text-white/70 text-center mb-4">~ on Mainnet Day 1 ~</p>
 
@@ -42,7 +42,7 @@
           Copied ✦
       </div>
 
-  <div id="result-content" class="space-y-[6px] text-sm mb-4 leading-[1.45]"></div>
+  <div id="result-content" class="space-y-1 text-sm mb-4"></div>
    <p id="powered-card" class="text-[11px] text-white/35 mt-3 text-right">
     Powered by Neverland ✦
   </p>
@@ -219,22 +219,21 @@ Object.entries(groups).forEach(([groupName, categories]) => {
 }
 
 function updateCard() {
-  resultContent.innerHTML = "";
+  let html = "";
 
   Object.entries(groups).forEach(([groupName, categories]) => {
     Object.keys(categories).forEach(category => {
-      const val = state[category] || "—";
-
-      resultContent.innerHTML += `
-      <div class="flex justify-between leading-[1.45]">
-        <span class="text-white/60">${category}</span>
-        <span class="text-white text-right">${val}</span>
-      </div>
-    `;
-
+      const val = state[category] || "";
+      html += `
+        <div class="flex justify-between">
+          <span class="text-white/60">${category}</span>
+          <span>${val}</span>
+        </div>
+      `;
     });
   });
 
+  resultContent.innerHTML = html;
   resultCard.classList.remove("hidden");
 }
 
