@@ -15,6 +15,12 @@
       background: radial-gradient(circle at top, #3B1477, #0C021F 70%);
       font-family: system-ui, sans-serif;
     }
+
+    #result-card:hover {
+  box-shadow: 0 0 22px rgba(215, 103, 255, 0.28);
+  transform: scale(1.01);
+  transition: 0.18s ease-out;
+}
   </style>
 </head>
 
@@ -47,13 +53,9 @@
     Powered by Neverland ✦
   </p>
 
-      <!-- HINT desktop only -->
-  <div id="copy-hint"
-       class="hidden md:flex pointer-events-none select-none
-              absolute inset-0 items-end justify-center pb-2
-              text-[11px] text-white/30 tracking-wide">
-    Click to copy
-  </div>
+  <p id="copy-hint" class="text-[11px] text-white/30 text-center opacity-60 mt-1 select-none">
+  Click to copy
+</p>
       
   <!-- SHARE BUTTON -->
   <button id="share-btn"
@@ -262,12 +264,15 @@ function autoAdvanceIfComplete(currentGroup, categories) {
 }
   
 document.getElementById("share-btn").onclick = shareCard;
-// === Desktop behaviour: Click-to-copy on card; button just opens X ===
+document.getElementById("share-btn").onclick = shareCard;
+
+// --- DESKTOP CLICK-TO-COPY ---
 if (!isMobile()) {
   const shareBtn = document.getElementById("share-btn");
   const copyHint = document.getElementById("copy-hint");
+  const overlay = document.getElementById("copied-overlay");
 
-  // Sur desktop: le bouton ouvre simplement X (pas de render mobile)
+  // Bouton Share → ouvre juste Twitter
   shareBtn.onclick = () => {
     const tweetText = `this is my Monad Mainnet Toolkit. day 1 is gonna be a movie ✦
 make yours here: https://nafyn.github.io/neverland-monadtoolkit/index.html`;
@@ -275,62 +280,36 @@ make yours here: https://nafyn.github.io/neverland-monadtoolkit/index.html`;
     window.open(tweetUrl, "_blank");
   };
 
-  // Click sur la carte -> copie PNG dans le presse-papier + feedback "Copied!"
-  resultCard.addEventListener("click", async () => {
+  // Apparence "cliquable"
+  resultCard.style.cursor = "pointer";
+
+  // Click sur la carte → copie l'image EXACTE affichée
+  resultCard.addEventListener("click", async (e) => {
+    // empêche le clic sur le bouton de déclencher la copie
+    if (e.target.id === "share-btn") return;
+
     try {
-      // cloner la carte (sans bouton)
-      const clone = resultCard.cloneNode(true);
-      clone.querySelector("#share-btn")?.remove();
-
-      // wrapper hors écran avec le même fond (joli rendu)
-      const wrap = document.createElement("div");
-      wrap.style.position = "absolute";
-      wrap.style.left = "-99999px";
-      wrap.style.top = "0";
-      wrap.style.width = "100vw";
-      wrap.style.minHeight = "100vh";
-      wrap.style.display = "flex";
-      wrap.style.alignItems = "center";
-      wrap.style.justifyContent = "center";
-      wrap.style.padding = "24px";
-      wrap.style.background = "radial-gradient(circle at top, #3B1477, #0C021F 70%)";
-      // petite largeur pour desktop pour une carte nette
-      clone.style.width = "560px";
-      clone.style.maxWidth = "560px";
-      clone.style.borderRadius = "20px";
-
-      wrap.appendChild(clone);
-      document.body.appendChild(wrap);
-
-      const canvas = await html2canvas(wrap, {
+      const canvas = await html2canvas(resultCard, {
         backgroundColor: null,
         scale: window.devicePixelRatio * 2
       });
 
-      document.body.removeChild(wrap);
-
       const blob = await new Promise(res => canvas.toBlob(res, "image/png"));
       await navigator.clipboard.write([new ClipboardItem({ "image/png": blob })]);
 
-      // feedback "Copied!" 1s
-      if (copyHint) {
-        const old = copyHint.textContent;
-        copyHint.textContent = "Copied!";
-        copyHint.classList.remove("text-white/30");
-        copyHint.classList.add("text-[#D767FF]/80");
-        setTimeout(() => {
-          copyHint.textContent = old;
-          copyHint.classList.add("text-white/30");
-          copyHint.classList.remove("text-[#D767FF]/80");
-        }, 1000);
-      }
-
-      // petit overlay central existant
-      const overlay = document.getElementById("copied-overlay");
+      // Feedback "Copied!"
       overlay.style.opacity = 1;
-      setTimeout(() => (overlay.style.opacity = 0), 800);
-    } catch (e) {
-      console.error(e);
+      copyHint.textContent = "Copied!";
+      copyHint.style.color = "#D767FF";
+
+      setTimeout(() => {
+        overlay.style.opacity = 0;
+        copyHint.textContent = "Click to copy";
+        copyHint.style.color = "rgba(255,255,255,0.6)";
+      }, 1000);
+
+    } catch (err) {
+      console.error("copy failed:", err);
     }
   });
 }  
