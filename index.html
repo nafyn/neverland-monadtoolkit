@@ -21,43 +21,38 @@
   transform: scale(1.01);
   transition: 0.18s ease-out;
 }
-    
-/* -------- DESKTOP CARD SPACING FIX -------- */
+    /* --- REAL FIX — desktop only --- */
 @media (min-width: 768px) {
 
-  #result-card {
-    padding-top: 32px;
-    padding-bottom: 28px;
+  /* On neutralise l'espace vertical auto ("space-y-1") */
+  #result-content {
+    display: flex;
+    flex-direction: column;
+    gap: 6px; /* <— ajuste ici (5–9 px pour tester) */
   }
 
-  /* Espace vertical entre chaque ligne */
-  #result-content > div {
-    line-height: 1.05;
-    margin-bottom: 3px;
+  /* Catégories (colonne gauche) */
+  #result-content .flex span:first-child {
+    opacity: 0.72;
+    letter-spacing: 0.2px; /* <— rend la colonne plus 'posée' */
+    padding-right: 14px;
   }
 
-  /* Espace sous "~ on Mainnet Day 1 ~" */
+  /* Valeurs (colonne droite) */
+  #result-content .flex span:last-child {
+    font-weight: 450; /* très subtil, donne du relief */
+  }
+
+  /* Baisser un peu la section "~ on Mainnet Day 1 ~" */
   #result-card h3 + p {
-    margin-bottom: 18px !important;
+    margin-bottom: 22px !important;
   }
 
-  /* Espace entre titre & liste */
-  #result-card h3 {
-    margin-bottom: 10px !important;
-  }
-
-  /* Espace entre liste & powered */
+  /* Remonter légèrement le Powered */
   #powered-card {
-    margin-top: 22px !important;
-  }
-
-  /* Alignement du texte gauche, léger tracking */
-  #result-content span:first-child {
-    opacity: 0.78;
-    letter-spacing: 0.1px;
+    margin-top: 28px !important;
   }
 }
-
   </style>
 </head>
 
