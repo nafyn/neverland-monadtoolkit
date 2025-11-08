@@ -22,21 +22,42 @@
   transition: 0.18s ease-out;
 }
     
-/* --- Harmonisation spacing desktop uniquement --- */
+/* -------- DESKTOP CARD SPACING FIX -------- */
 @media (min-width: 768px) {
+
   #result-card {
-    padding: 24px; /* resserre le cadre */
+    padding-top: 32px;
+    padding-bottom: 28px;
   }
 
-  #result-content div {
-    line-height: 1.25; /* rapproche chaque ligne */
+  /* Espace vertical entre chaque ligne */
+  #result-content > div {
+    line-height: 1.05;
+    margin-bottom: 3px;
   }
 
+  /* Espace sous "~ on Mainnet Day 1 ~" */
+  #result-card h3 + p {
+    margin-bottom: 18px !important;
+  }
+
+  /* Espace entre titre & liste */
+  #result-card h3 {
+    margin-bottom: 10px !important;
+  }
+
+  /* Espace entre liste & powered */
   #powered-card {
-    margin-top: 14px; /* rapproche le footer de la liste */
-    display: block;
+    margin-top: 22px !important;
+  }
+
+  /* Alignement du texte gauche, léger tracking */
+  #result-content span:first-child {
+    opacity: 0.78;
+    letter-spacing: 0.1px;
   }
 }
+
   </style>
 </head>
 
