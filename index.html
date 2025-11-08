@@ -264,45 +264,26 @@ function autoAdvanceIfComplete(currentGroup, categories) {
 }
   
 document.getElementById("share-btn").onclick = shareCard;
-document.getElementById("share-btn").onclick = shareCard;
 
-// --- DESKTOP CLICK-TO-COPY ---
 // --- DESKTOP CLICK-TO-COPY ---
 if (!isMobile()) {
-  const shareBtn = document.getElementById("share-btn");
-  const copyHint = document.getElementById("copy-hint");
   const overlay = document.getElementById("copied-overlay");
+  const copyHint = document.getElementById("copy-hint");
 
-  // Bouton Share → ouvre juste Twitter
-  shareBtn.onclick = () => {
-    const tweetText = `this is my Monad Mainnet Toolkit. day 1 is gonna be a movie ✦
-make yours here: https://nafyn.github.io/neverland-monadtoolkit/index.html`;
-    const tweetUrl = "https://twitter.com/intent/tweet?text=" + encodeURIComponent(tweetText);
-    window.open(tweetUrl, "_blank");
-  };
-
-  // Carte cliquable
   resultCard.style.cursor = "pointer";
 
-    // Click sur la carte → copie sans altérer l'écran
   resultCard.addEventListener("click", async (e) => {
     if (e.target.id === "share-btn") return;
 
-    const shareBtn = document.getElementById("share-btn");
-    const copyHint = document.getElementById("copy-hint");
-    const overlay = document.getElementById("copied-overlay");
-
     try {
-      // 1) CLONER LA CARTE
+      // 1) Cloner la carte (on ne touche pas l'original)
       const clone = resultCard.cloneNode(true);
 
-      // 2) RETIRER "Share" + "Click to copy" DU CLONE SEULEMENT
-      const btn = clone.querySelector("#share-btn");
-      if (btn) btn.remove();
-      const hint = clone.querySelector("#copy-hint");
-      if (hint) hint.remove();
+      // 2) Retirer uniquement du clone : share-btn + "Click to copy"
+      clone.querySelector("#share-btn")?.remove();
+      clone.querySelector("#copy-hint")?.remove();
 
-      // 3) PRÉPARER UN CANVAS OFF-SCREEN AVEC LE BON FOND
+      // 3) Préparer une zone de capture hors-écran avec le fond correct
       const temp = document.createElement("div");
       temp.style.position = "absolute";
       temp.style.left = "-99999px";
@@ -313,20 +294,19 @@ make yours here: https://nafyn.github.io/neverland-monadtoolkit/index.html`;
       temp.appendChild(clone);
       document.body.appendChild(temp);
 
-      // 4) CAPTURE
+      // 4) Capture
       const canvas = await html2canvas(temp, {
         backgroundColor: null,
         scale: window.devicePixelRatio * 2
       });
 
-      // 5) CLEAN TEMP
       document.body.removeChild(temp);
 
-      // 6) COPIE CLIPBOARD
+      // 5) Copier dans le presse-papier
       const blob = await new Promise(res => canvas.toBlob(res, "image/png"));
       await navigator.clipboard.write([new ClipboardItem({ "image/png": blob })]);
 
-      // 7) FEEDBACK VISUEL
+      // 6) Feedback ✦
       overlay.style.opacity = 1;
       copyHint.textContent = "Copied!";
       copyHint.style.color = "#D767FF";
@@ -335,12 +315,13 @@ make yours here: https://nafyn.github.io/neverland-monadtoolkit/index.html`;
         overlay.style.opacity = 0;
         copyHint.textContent = "Click to copy";
         copyHint.style.color = "rgba(255,255,255,0.6)";
-      }, 1000);
+      }, 900);
 
-    } catch (err) {
+    } catch(err) {
       console.error(err);
     }
   });
+}
 
 async function shareCard() {
   const card = document.getElementById("result-card");
