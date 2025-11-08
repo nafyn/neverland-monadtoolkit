@@ -199,10 +199,12 @@ Object.entries(groups).forEach(([groupName, categories]) => {
         `;
         btn.textContent = option;
         btn.onclick = () => { 
-          state[category] = option; 
-          updateCard(); 
-          autoAdvanceIfComplete(groupName, categories);
-        };
+        state[category] = option;
+        updateCard();
+        autoAdvanceIfComplete(groupName, categories);
+        render(); // ← REFRESH pour mettre la couleur active immédiatement
+      };
+
         buttons.appendChild(btn);
       });
 
