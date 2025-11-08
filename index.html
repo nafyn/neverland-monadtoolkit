@@ -16,17 +16,20 @@
   </style>
 </head>
 
-<body class="min-h-screen text-white flex flex-col items-center py-8 px-4">
+<body class="min-h-screen text-white flex justify-center py-10 px-4">
 
-  <h1 class="text-3xl font-bold mb-8">My Monad Day 1 Toolkit</h1>
+  <div class="w-full max-w-6xl grid grid-cols-1 md:grid-cols-3 gap-10">
 
-  <div id="app" class="w-full max-w-3xl space-y-8"></div>
+    <!-- Left: Options -->
+    <div id="app" class="md:col-span-2 space-y-8"></div>
 
-  <!-- Final Card -->
-  <div id="result-card" class="hidden w-full max-w-sm mt-14 p-6 rounded-2xl bg-[#31144B]/60 backdrop-blur border border-white/10 shadow-lg text-center">
-    <h3 class="text-lg font-semibold mb-2">My Toolkit</h3>
-    <p class="text-sm text-white/70 mb-4">~ on Mainnet Day 1 ~</p>
-    <div id="result-content" class="space-y-1 text-sm"></div>
+    <!-- Right: Live Card -->
+    <div id="result-card" class="h-fit sticky top-10 p-6 rounded-2xl bg-[#31144B]/60 backdrop-blur border border-white/10 shadow-xl hidden">
+      <h3 class="text-lg font-semibold mb-2 text-center">My Toolkit</h3>
+      <p class="text-sm text-white/70 text-center mb-4">~ on Mainnet Day 1 ~</p>
+      <div id="result-content" class="space-y-1 text-sm"></div>
+    </div>
+
   </div>
 
 <script>
@@ -86,17 +89,15 @@ function render() {
 }
 
 function updateCard() {
-  const selected = Object.keys(categories).every(cat => state[cat]);
-
-  if (!selected) {
-    resultCard.classList.add("hidden");
-    return;
-  }
-
   resultContent.innerHTML = Object.entries(state)
-    .map(([cat, val]) => `<div class="flex justify-between"><span class="text-white/60">${cat}</span><span>${val}</span></div>`)
+    .map(([cat, val]) => `
+      <div class="flex justify-between">
+        <span class="text-white/60">${cat}</span>
+        <span>${val}</span>
+      </div>`)
     .join("");
 
+  // Show card as soon as the user selects something
   resultCard.classList.remove("hidden");
 }
 
