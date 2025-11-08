@@ -32,7 +32,7 @@
   <div class="grid grid-cols-1 md:grid-cols-3 gap-10">
     <div id="app" class="md:col-span-2 space-y-8"></div>
 
-    <div id="result-card" class="h-fit sticky top-10 p-4 rounded-xl bg-white/5 border border-white/10 backdrop-blur shadow-lg hidden">
+    <div id="result-card" class="h-fit sticky top-10 p-4 rounded-xl bg-white/5 border border-white/10 backdrop-blur shadow-lg hidden relative">
   <h3 class="text-lg font-semibold mb-2 text-center">My Toolkit</h3>
   <p class="text-sm text-white/70 text-center mb-4">~ on Mainnet Day 1 ~</p>
 
@@ -46,6 +46,14 @@
    <p id="powered-card" class="text-[11px] text-white/35 mt-3 text-right">
     Powered by Neverland ✦
   </p>
+
+      <!-- HINT desktop only -->
+  <div id="copy-hint"
+       class="hidden md:flex pointer-events-none select-none
+              absolute inset-0 items-end justify-center pb-2
+              text-[11px] text-white/30 tracking-wide">
+    Click to copy
+  </div>
       
   <!-- SHARE BUTTON -->
   <button id="share-btn"
@@ -254,6 +262,78 @@ function autoAdvanceIfComplete(currentGroup, categories) {
 }
   
 document.getElementById("share-btn").onclick = shareCard;
+// === Desktop behaviour: Click-to-copy on card; button just opens X ===
+if (!isMobile()) {
+  const shareBtn = document.getElementById("share-btn");
+  const copyHint = document.getElementById("copy-hint");
+
+  // Sur desktop: le bouton ouvre simplement X (pas de render mobile)
+  shareBtn.onclick = () => {
+    const tweetText = `this is my Monad Mainnet Toolkit. day 1 is gonna be a movie ✦
+make yours here: https://nafyn.github.io/neverland-monadtoolkit/index.html`;
+    const tweetUrl = "https://twitter.com/intent/tweet?text=" + encodeURIComponent(tweetText);
+    window.open(tweetUrl, "_blank");
+  };
+
+  // Click sur la carte -> copie PNG dans le presse-papier + feedback "Copied!"
+  resultCard.addEventListener("click", async () => {
+    try {
+      // cloner la carte (sans bouton)
+      const clone = resultCard.cloneNode(true);
+      clone.querySelector("#share-btn")?.remove();
+
+      // wrapper hors écran avec le même fond (joli rendu)
+      const wrap = document.createElement("div");
+      wrap.style.position = "absolute";
+      wrap.style.left = "-99999px";
+      wrap.style.top = "0";
+      wrap.style.width = "100vw";
+      wrap.style.minHeight = "100vh";
+      wrap.style.display = "flex";
+      wrap.style.alignItems = "center";
+      wrap.style.justifyContent = "center";
+      wrap.style.padding = "24px";
+      wrap.style.background = "radial-gradient(circle at top, #3B1477, #0C021F 70%)";
+      // petite largeur pour desktop pour une carte nette
+      clone.style.width = "560px";
+      clone.style.maxWidth = "560px";
+      clone.style.borderRadius = "20px";
+
+      wrap.appendChild(clone);
+      document.body.appendChild(wrap);
+
+      const canvas = await html2canvas(wrap, {
+        backgroundColor: null,
+        scale: window.devicePixelRatio * 2
+      });
+
+      document.body.removeChild(wrap);
+
+      const blob = await new Promise(res => canvas.toBlob(res, "image/png"));
+      await navigator.clipboard.write([new ClipboardItem({ "image/png": blob })]);
+
+      // feedback "Copied!" 1s
+      if (copyHint) {
+        const old = copyHint.textContent;
+        copyHint.textContent = "Copied!";
+        copyHint.classList.remove("text-white/30");
+        copyHint.classList.add("text-[#D767FF]/80");
+        setTimeout(() => {
+          copyHint.textContent = old;
+          copyHint.classList.add("text-white/30");
+          copyHint.classList.remove("text-[#D767FF]/80");
+        }, 1000);
+      }
+
+      // petit overlay central existant
+      const overlay = document.getElementById("copied-overlay");
+      overlay.style.opacity = 1;
+      setTimeout(() => (overlay.style.opacity = 0), 800);
+    } catch (e) {
+      console.error(e);
+    }
+  });
+}  
 
 async function shareCard() {
   const card = document.getElementById("result-card");
