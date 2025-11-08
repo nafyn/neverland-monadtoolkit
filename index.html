@@ -32,7 +32,7 @@
   <div class="grid grid-cols-1 md:grid-cols-3 gap-10">
     <div id="app" class="md:col-span-2 space-y-8"></div>
 
-    <div id="result-card" class="hidden md:sticky md:top-10 p-4 rounded-xl bg-white/5 border border-white/10 backdrop-blur shadow-lg max-w-sm mx-auto md:col-span-1 cursor-pointer">
+    <div id="result-card" class="h-fit sticky top-10 p-4 rounded-xl bg-white/5 border border-white/10 backdrop-blur shadow-lg hidden">
   <h3 class="text-lg font-semibold mb-2 text-center">My Toolkit</h3>
   <p class="text-sm text-white/70 text-center mb-4">~ on Mainnet Day 1 ~</p>
 
@@ -351,36 +351,8 @@ clone.appendChild(poweredClone);
 
   return;
 }
+  
 }
-
-  resultCard.onclick = async () => {
-  // uniquement desktop
-  if (/iPhone|iPad|Android/i.test(navigator.userAgent)) return;
-
-  // 1) convertir la carte en image
-  const canvas = await html2canvas(resultCard, {
-    backgroundColor: null,
-    scale: window.devicePixelRatio * 1.8
-  });
-  const blob = await new Promise(resolve => canvas.toBlob(resolve, "image/png"));
-
-  // 2) copier l'image dans le presse papier
-  try {
-    await navigator.clipboard.write([
-      new ClipboardItem({ "image/png": blob })
-    ]);
-  } catch (err) {
-    alert("Clipboard is not supported in your browser.");
-    return;
-  }
-
-  // 3) ouvrir le tweet
-  const tweetText = `this is my Monad Mainnet Toolkit. day 1 is gonna be a movie ✦
-make yours here: https://nafyn.github.io/neverland-monadtoolkit/index.html`;
-
-  const tweetUrl = "https://twitter.com/intent/tweet?text=" + encodeURIComponent(tweetText);
-  window.open(tweetUrl, "_blank");
-};
 
 render();
 </script>
