@@ -264,15 +264,15 @@ function autoAdvanceIfComplete(currentGroup, categories) {
 }
   
 document.getElementById("share-btn").onclick = shareCard;
-document.getElementById("share-btn").onclick = shareCard;
 
-// --- DESKTOP CLICK-TO-COPY ---
+// --- DESKTOP CLICK-TO-COPY (clean export) ---
 if (!isMobile()) {
+
   const shareBtn = document.getElementById("share-btn");
   const copyHint = document.getElementById("copy-hint");
   const overlay = document.getElementById("copied-overlay");
 
-  // Bouton Share → ouvre juste Twitter
+  // Share Button → Twitter only
   shareBtn.onclick = () => {
     const tweetText = `this is my Monad Mainnet Toolkit. day 1 is gonna be a movie ✦
 make yours here: https://nafyn.github.io/neverland-monadtoolkit/index.html`;
@@ -280,37 +280,43 @@ make yours here: https://nafyn.github.io/neverland-monadtoolkit/index.html`;
     window.open(tweetUrl, "_blank");
   };
 
-  // Apparence "cliquable"
+  // Make card clickable
   resultCard.style.cursor = "pointer";
 
-  // Click sur la carte → copie l'image EXACTE affichée
   resultCard.addEventListener("click", async (e) => {
-    // empêche le clic sur le bouton de déclencher la copie
     if (e.target.id === "share-btn") return;
 
-    try {
-      const canvas = await html2canvas(resultCard, {
-        backgroundColor: null,
-        scale: window.devicePixelRatio * 2
-      });
+    // --- CLONE CARD CLEAN ---
+    const clone = resultCard.cloneNode(true);
 
-      const blob = await new Promise(res => canvas.toBlob(res, "image/png"));
-      await navigator.clipboard.write([new ClipboardItem({ "image/png": blob })]);
+    // Remove hint + button from clone
+    const hint = clone.querySelector("#copy-hint");
+    if (hint) hint.remove();
 
-      // Feedback "Copied!"
-      overlay.style.opacity = 1;
-      copyHint.textContent = "Copied!";
-      copyHint.style.color = "#D767FF";
+    const btn = clone.querySelector("#share-btn");
+    if (btn) btn.remove();
 
-      setTimeout(() => {
-        overlay.style.opacity = 0;
-        copyHint.textContent = "Click to copy";
-        copyHint.style.color = "rgba(255,255,255,0.6)";
-      }, 1000);
+    // Convert clone → canvas
+    const canvas = await html2canvas(clone, {
+      backgroundColor: null,
+      scale: window.devicePixelRatio * 2,
+      useCORS: true
+    });
 
-    } catch (err) {
-      console.error("copy failed:", err);
-    }
+    // Copy to clipboard
+    const blob = await new Promise(r => canvas.toBlob(r, "image/png"));
+    await navigator.clipboard.write([new ClipboardItem({ "image/png": blob })]);
+
+    // Feedback UI
+    overlay.style.opacity = 1;
+    copyHint.textContent = "Copied!";
+    copyHint.style.color = "#D767FF";
+
+    setTimeout(() => {
+      overlay.style.opacity = 0;
+      copyHint.textContent = "Click to copy";
+      copyHint.style.color = "rgba(255,255,255,0.6)";
+    }, 1000);
   });
 }  
 
