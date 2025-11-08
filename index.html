@@ -275,11 +275,15 @@ n\make yours here: https://nafyn.github.io/neverland-monadtoolkit/index.html`;
   const mobileImage  = document.getElementById("mobile-save-image");
   const closeBtn     = document.getElementById("mobile-close");
 
-  const clone = card.cloneNode(true);
+    const clone = card.cloneNode(true);
 
   // retirer le bouton du clone
   const btn = clone.querySelector("#share-btn");
   if (btn) btn.remove();
+
+  // ✅ supprimer le powered déjà présent dans la carte (ce qui cause le doublon)
+  const oldPowered = clone.querySelector("#powered-card");
+  if (oldPowered) oldPowered.remove();
 
   // éviter les artefacts iOS (html2canvas ne gère pas backdrop-filter)
   clone.classList.remove("backdrop-blur");
