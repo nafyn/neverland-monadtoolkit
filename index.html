@@ -34,6 +34,12 @@
   <h3 class="text-lg font-semibold mb-2 text-center">My Toolkit</h3>
   <p class="text-sm text-white/70 text-center mb-4">~ on Mainnet Day 1 ~</p>
 
+      <div id="copied-overlay" class="pointer-events-none opacity-0 transition-opacity duration-500
+        fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 
+        px-6 py-3 rounded-xl border border-[#D767FF] text-[#D767FF] bg-black/40 backdrop-blur-lg">
+          Copied ✦
+      </div>
+
   <div id="result-content" class="space-y-1 text-sm mb-4"></div>
 
   <!-- SHARE BUTTON -->
@@ -44,7 +50,8 @@
 </div>
   </div>
 </div>
-
+  
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 <script>
 const groups = {
   "Infra": {
@@ -238,6 +245,59 @@ document.getElementById("share-btn").onclick = () => {
   window.open(tweetUrl, "_blank");
 };
 
+async function shareCard() {
+  const card = document.getElementById("result-card");
+  const overlay = document.getElementById("copied-overlay");
+
+  // Générer une image canvas
+  const canvas = await html2canvas(card, {
+    backgroundColor: null,
+    scale: 2
+  });
+
+  // Convertir en blob
+  const blob = await new Promise(resolve => canvas.toBlob(resolve, "image/png"));
+  const file = new File([blob], "monad-toolkit.png", { type: "image/png" });
+
+  const text = `this is my Monad Mainnet Toolkit. day 1 is gonna be a movie ✦\nmake yours here: https://nafyn.github.io/neverland-monadtoolkit/index.html`;
+
+  // --- Desktop: copier dans le presse-papier (si supporté)
+  if (navigator.clipboard && navigator.clipboard.write) {
+    try {
+      await navigator.clipboard.write([
+        new ClipboardItem({ "image/png": blob })
+      ]);
+
+      // effet "Copied!"
+      overlay.style.opacity = 1;
+      setTimeout(() => overlay.style.opacity = 0, 900);
+
+    } catch (err) {
+      console.warn("Clipboard image copy failed, fallback will apply");
+    }
+  }
+
+  // --- Mobile: si partage d’image supporté
+  if (navigator.canShare && navigator.canShare({ files: [file] })) {
+    try {
+      await navigator.share({ files: [file], text });
+      return; // tweet peut se faire directement via share UI mobile
+    } catch (err) {}
+  }
+
+  // --- Fallback universel : téléchargement si rien n’a marché
+  const fallbackURL = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = fallbackURL;
+  link.download = "monad-toolkit.png";
+  link.click();
+
+  // Ouvrir Twitter avec texte prérempli (desktop + mobile)
+  const tweetUrl = "https://twitter.com/intent/tweet?text=" + encodeURIComponent(text);
+  window.open(tweetUrl, "_blank");
+}
+
+document.getElementById("share-btn").onclick = shareCard;
 render();
 </script>
 
