@@ -306,6 +306,18 @@ n/make yours here: https://nafyn.github.io/neverland-monadtoolkit/index.html`;
   clone.style.margin = "0 auto";
   clone.style.borderRadius = "20px";
 
+  // === Ajouter "Powered by Neverland ✦" dans l'image exportée (non cliquable) ===
+const poweredClone = document.createElement("p");
+poweredClone.textContent = "Powered by Neverland ✦";
+poweredClone.style.position = "absolute";
+poweredClone.style.left = "14px";
+poweredClone.style.bottom = "14px";
+poweredClone.style.fontSize = "12px";
+poweredClone.style.color = "rgba(255,255,255,0.55)";
+poweredClone.style.pointerEvents = "none"; // sécurité : ne casse aucun click
+clone.style.position = "relative"; // nécessaire pour l'ancrage en bas-gauche
+clone.appendChild(poweredClone);
+
   // ajouter et capturer
   temp.appendChild(clone);
   document.body.appendChild(temp);
