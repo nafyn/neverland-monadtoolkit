@@ -285,70 +285,33 @@ make yours here: https://nafyn.github.io/neverland-monadtoolkit/index.html`;
 
   // Click sur la carte → copie l'image EXACTE affichée
   resultCard.addEventListener("click", async (e) => {
-  if (e.target.id === "share-btn") return;
+    // empêche le clic sur le bouton de déclencher la copie
+    if (e.target.id === "share-btn") return;
 
-  const clone = resultCard.cloneNode(true);
+    try {
+      const canvas = await html2canvas(resultCard, {
+        backgroundColor: null,
+        scale: window.devicePixelRatio * 2
+      });
 
-  clone.querySelector("#copy-hint")?.remove();
-  clone.querySelector("#share-btn")?.remove();
-  clone.querySelector("#powered-card")?.remove();
+      const blob = await new Promise(res => canvas.toBlob(res, "image/png"));
+      await navigator.clipboard.write([new ClipboardItem({ "image/png": blob })]);
 
-  // Ajouter powered fixe dans l’image
-  const powered = document.createElement("p");
-  powered.textContent = "Powered by Neverland ✦";
-  powered.style.position = "absolute";
-  powered.style.right = "14px";
-  powered.style.bottom = "14px";
-  powered.style.fontSize = "12px";
-  powered.style.color = "rgba(255,255,255,0.55)";
-  powered.style.pointerEvents = "none";
-  clone.style.position = "relative";
-  clone.appendChild(powered);
+      // Feedback "Copied!"
+      overlay.style.opacity = 1;
+      copyHint.textContent = "Copied!";
+      copyHint.style.color = "#D767FF";
 
-  // Wrapper avec fond gradient (desktop export)
-  const wrapper = document.createElement("div");
-  wrapper.style.position = "absolute";
-  wrapper.style.left = "-99999px";
-  wrapper.style.top = "0";
-  wrapper.style.width = "100vw";
-  wrapper.style.height = "100vh";
-  wrapper.style.display = "flex";
-  wrapper.style.alignItems = "center";
-  wrapper.style.justifyContent = "center";
-  wrapper.style.background = "radial-gradient(circle at top, #3B1477, #0C021F 70%)";
+      setTimeout(() => {
+        overlay.style.opacity = 0;
+        copyHint.textContent = "Click to copy";
+        copyHint.style.color = "rgba(255,255,255,0.6)";
+      }, 1000);
 
-  clone.style.maxWidth = "640px";
-  clone.style.width = "90vw";
-  clone.style.borderRadius = "20px";
-
-  wrapper.appendChild(clone);
-  document.body.appendChild(wrapper);
-
-  try {
-    const canvas = await html2canvas(wrapper, {
-      backgroundColor: null,
-      scale: window.devicePixelRatio * 2
-    });
-
-    const blob = await new Promise(res => canvas.toBlob(res, "image/png"));
-    await navigator.clipboard.write([new ClipboardItem({ "image/png": blob })]);
-
-    overlay.style.opacity = 1;
-    copyHint.textContent = "Copied!";
-    copyHint.style.color = "#D767FF";
-
-    setTimeout(() => {
-      overlay.style.opacity = 0;
-      copyHint.textContent = "Click to copy";
-      copyHint.style.color = "rgba(255,255,255,0.6)";
-    }, 1000);
-
-  } catch (err) {
-    console.error(err);
-  }
-
-  document.body.removeChild(wrapper);
-});
+    } catch (err) {
+      console.error("copy failed:", err);
+    }
+  });
 }  
 
 async function shareCard() {
