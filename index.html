@@ -276,36 +276,51 @@ make yours here: https://nafyn.github.io/neverland-monadtoolkit/index.html`;
     return;
   }
 
-  // ---------- MOBILE ----------
-  // 1) Clone card
+ // === MOBILE ===
+if (isMobile) {
+
+  // 1) Clone the card cleanly
   const clone = card.cloneNode(true);
-  clone.querySelector("#share-btn")?.remove();
 
-  // 2) Wrapper with background (no blur)
-  const wrapper = document.createElement("div");
-  wrapper.style.position = "absolute";
-  wrapper.style.left = "-9999px";
-  wrapper.style.padding = "40px";
-  wrapper.style.background = "radial-gradient(circle at top, #3B1477, #0C021F 70%)";
-  wrapper.style.borderRadius = "24px";
-  wrapper.appendChild(clone);
-  document.body.appendChild(wrapper);
+  // 2) Remove the share button from the clone
+  const cloneBtn = clone.querySelector("#share-btn");
+  if (cloneBtn) cloneBtn.remove();
 
-  // 3) Capture wrapper
-  const canvas = await html2canvas(wrapper, { backgroundColor: null, scale: 2 });
-  document.body.removeChild(wrapper);
+  // 3) Style the clone to take full screen width & center content
+  clone.style.position = "fixed";
+  clone.style.left = "0";
+  clone.style.top = "0";
+  clone.style.width = "100vw";
+  clone.style.maxWidth = "100vw";
+  clone.style.padding = "24px";
+  clone.style.boxSizing = "border-box";
+  clone.style.transform = "none";
+  clone.style.background = "transparent";
+  clone.style.zIndex = "-1";
+  document.body.appendChild(clone);
+
+  // 4) Capture with better resolution
+  const canvas = await html2canvas(clone, { 
+    backgroundColor: null,
+    scale: window.devicePixelRatio * 1.8
+  });
+
+  document.body.removeChild(clone);
 
   const dataUrl = canvas.toDataURL("image/png");
 
-  // 4) Show fullscreen preview to manual-save
+  // 5) Show fullscreen save overlay
   mobileImage.src = dataUrl;
   mobileScreen.classList.remove("hidden");
 
-  // 5) User saves first → THEN taps Done → THEN we open Twitter
+  // 6) User saves, THEN tweet opens
   closeBtn.onclick = () => {
     mobileScreen.classList.add("hidden");
     window.open(tweetUrl, "_blank");
   };
+
+  return;
+}
 }
 
 render();
