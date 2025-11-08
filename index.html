@@ -17,22 +17,25 @@
 </head>
 
 <body class="min-h-screen text-white flex justify-center py-10 px-4">
-  
-  <h1 class="text-3xl font-bold mb-8">Monad Day 1 Toolkit</h1>
 
-  <div class="w-full max-w-6xl grid grid-cols-1 md:grid-cols-3 gap-10">
+  <div class="w-full max-w-6xl space-y-10">
 
-    <!-- Left: Options -->
-    <div id="app" class="md:col-span-2 space-y-8"></div>
+    <!-- Title -->
+    <h1 class="text-4xl font-bold tracking-wide">Monad Day 1 Toolkit</h1>
 
-    <!-- Right: Live Card -->
-    <div id="result-card" class="h-fit sticky top-10 p-6 rounded-2xl bg-[#31144B]/60 backdrop-blur border border-white/10 shadow-xl hidden">
-      <h3 class="text-lg font-semibold mb-2 text-center">My Toolkit</h3>
-      <p class="text-sm text-white/70 text-center mb-4">~ on Mainnet Day 1 ~</p>
-      <div id="result-content" class="space-y-1 text-sm"></div>
+    <!-- Main Layout -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-10">
+      <div id="app" class="md:col-span-2 space-y-8"></div>
+
+      <div id="result-card" class="h-fit sticky top-10 p-6 rounded-2xl bg-white/5 border border-white/10 backdrop-blur shadow-xl hidden">
+        <h3 class="text-lg font-semibold mb-2 text-center">My Toolkit</h3>
+        <p class="text-sm text-white/70 text-center mb-4">~ on Mainnet Day 1 ~</p>
+        <div id="result-content" class="space-y-1 text-sm"></div>
+      </div>
     </div>
 
   </div>
+</body>
 
 <script>
 const groups = {
