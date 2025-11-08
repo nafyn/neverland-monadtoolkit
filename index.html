@@ -264,8 +264,6 @@ function autoAdvanceIfComplete(currentGroup, categories) {
 }
   
 document.getElementById("share-btn").onclick = shareCard;
-document.getElementById("share-btn").onclick = shareCard;
-
 // --- DESKTOP CLICK-TO-COPY ---
 if (!isMobile()) {
   const shareBtn = document.getElementById("share-btn");
@@ -284,50 +282,35 @@ make yours here: https://nafyn.github.io/neverland-monadtoolkit/index.html`;
   resultCard.style.cursor = "pointer";
 
   // Click sur la carte → copie l'image EXACTE affichée
-resultCard.addEventListener("click", async (e) => {
-  if (e.target.id === "share-btn") return;
+  resultCard.addEventListener("click", async (e) => {
+    if (e.target.id === "share-btn") return;
 
-  try {
-    const cardRect = resultCard.getBoundingClientRect();
+    // 👇 On revient à TON ancien comportement pour réparer l’UI (capture corrigée ensuite)
+    try {
+      const canvas = await html2canvas(resultCard, {
+        backgroundColor: null,
+        scale: window.devicePixelRatio * 2
+      });
 
-    const canvas = await html2canvas(document.body, {
-      backgroundColor: null,
-      scale: window.devicePixelRatio * 2
-    });
+      const blob = await new Promise(res => canvas.toBlob(res, "image/png"));
+      await navigator.clipboard.write([new ClipboardItem({ "image/png": blob })]);
 
-    const ctx = canvas.getContext("2d");
+      overlay.style.opacity = 1;
+      copyHint.textContent = "Copied!";
+      copyHint.style.color = "#D767FF";
 
-    // conversion DOM → canvas
-    const scale = canvas.width / document.body.clientWidth;
-    const sx = cardRect.left * scale;
-    const sy = cardRect.top * scale;
-    const sw = cardRect.width * scale;
-    const sh = cardRect.height * scale;
+      setTimeout(() => {
+        overlay.style.opacity = 0;
+        copyHint.textContent = "Click to copy";
+        copyHint.style.color = "rgba(255,255,255,0.6)";
+      }, 1000);
 
-    // créer un canvas crop
-    const output = document.createElement("canvas");
-    output.width = sw;
-    output.height = sh;
+    } catch (err) {
+      console.error("copy failed:", err);
+    }
+  });
+} // 👈 IMPORTANT : on remet bien la fermeture ici
 
-    output.getContext("2d").drawImage(canvas, sx, sy, sw, sh, 0, 0, sw, sh);
-
-    const blob = await new Promise(res => output.toBlob(res, "image/png"));
-    await navigator.clipboard.write([new ClipboardItem({ "image/png": blob })]);
-
-    overlay.style.opacity = 1;
-    copyHint.textContent = "Copied!";
-    copyHint.style.color = "#D767FF";
-
-    setTimeout(() => {
-      overlay.style.opacity = 0;
-      copyHint.textContent = "Click to copy";
-      copyHint.style.color = "rgba(255,255,255,0.6)";
-    }, 1000);
-
-  } catch (err) {
-    console.error("copy failed:", err);
-  }
-});  
 
 async function shareCard() {
   const card = document.getElementById("result-card");
