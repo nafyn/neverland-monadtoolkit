@@ -257,48 +257,51 @@ async function shareCard() {
   const mobileScreen = document.getElementById("mobile-save-screen");
   const mobileImage = document.getElementById("mobile-save-image");
 
-  // Générer capture haute résolution
-  const canvas = await html2canvas(card, { backgroundColor: null, scale: 2 });
-  const dataUrl = canvas.toDataURL("image/png");
-  const blob = await new Promise(resolve => canvas.toBlob(resolve, "image/png"));
-
-  const text = `this is my Monad Mainnet Toolkit. day 1 is gonna be a movie ✦
-  \n make yours here: https://nafyn.github.io/neverland-monadtoolkit/index.html`;
-
-  // 🌍 Detect mobile
   const isMobile = /iPhone|iPad|Android/i.test(navigator.userAgent);
 
-  // 📱 **MOBILE MODE**
+  // 🔥 Fix 1: remove sticky to avoid cropping
+  card.classList.remove("sticky");
+
+  // Generate capture
+  const canvas = await html2canvas(card, { backgroundColor: null, scale: 2 });
+
+  // Restore sticky
+  card.classList.add("sticky");
+
+  const dataUrl = canvas.toDataURL("image/png");
+  const blob = await new Promise(resolve => canvas.toBlob(resolve, "image/png"));
+  const file = new File([blob], "monad-toolkit.png", { type: "image/png" });
+
+  const tweetText = `this is my Monad Mainnet Toolkit. day 1 is gonna be a movie ✦
+make yours here: https://nafyn.github.io/neverland-monadtoolkit/index.html`;
+
+  const tweetUrl = "https://twitter.com/intent/tweet?text=" + encodeURIComponent(tweetText);
+
+  // 📱 MOBILE
   if (isMobile) {
-    // 1) afficher l’image en plein écran
+    // ✅ Open Twitter immediately (allowed because in click event)
+    window.open(tweetUrl, "_blank");
+
+    // ✅ Then show fullscreen save UI
     mobileImage.src = dataUrl;
     mobileScreen.classList.remove("hidden");
-
-    // 2) ouvrir twitter en même temps
-    setTimeout(() => {
-      const tweetUrl = "https://twitter.com/intent/tweet?text=" + encodeURIComponent(text);
-      window.open(tweetUrl, "_blank");
-    }, 600);
-
     return;
   }
 
-  // 💻 **DESKTOP MODE**
+  // 💻 DESKTOP
   try {
     await navigator.clipboard.write([
       new ClipboardItem({ "image/png": blob })
     ]);
 
-    // Effet "Copied!"
+    // Show "Copied ✦" feedback
     overlay.style.opacity = 1;
     setTimeout(() => overlay.style.opacity = 0, 900);
+
   } catch (err) {
-    console.warn("Clipboard image copy failed on desktop:", err);
-    // Si copie échoue → on ne télécharge pas → on continue
+    console.warn("Clipboard not supported, skipping copy.");
   }
 
-  // ouvrir twitter
-  const tweetUrl = "https://twitter.com/intent/tweet?text=" + encodeURIComponent(text);
   window.open(tweetUrl, "_blank");
 }
 
