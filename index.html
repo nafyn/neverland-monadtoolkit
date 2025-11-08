@@ -21,21 +21,22 @@
   transform: scale(1.01);
   transition: 0.18s ease-out;
 }
+    
+/* --- Harmonisation spacing desktop uniquement --- */
+@media (min-width: 768px) {
+  #result-card {
+    padding: 24px; /* resserre le cadre */
+  }
 
-    /* --- Harmonisation spacing / rendu export --- */
-#result-card {
-  padding: 24px; /* resserre la carte visuellement */
+  #result-content div {
+    line-height: 1.25; /* rapproche chaque ligne */
+  }
+
+  #powered-card {
+    margin-top: 14px; /* rapproche le footer de la liste */
+    display: block;
+  }
 }
-
-#result-content div {
-  line-height: 1.25; /* resserre espace entre Wallets / Bridges / Perps... */
-}
-
-#powered-card {
-  margin-top: 14px; /* rapproche "Powered by Neverland" du contenu */
-  display: block;
-}
-
   </style>
 </head>
 
