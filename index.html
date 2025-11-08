@@ -289,18 +289,21 @@ async function shareCard() {
   }
 
   // 💻 DESKTOP
-  try {
-    await navigator.clipboard.write([
-      new ClipboardItem({ "image/png": blob })
-    ]);
+  // 💻 DESKTOP — copy image safely
+try {
+  // Re-fetch clean blob to avoid tainted canvas block
+  const cleanBlob = await (await fetch(dataUrl)).blob();
+  await navigator.clipboard.write([
+    new ClipboardItem({ "image/png": cleanBlob })
+  ]);
 
-    // Show "Copied ✦" feedback
-    overlay.style.opacity = 1;
-    setTimeout(() => overlay.style.opacity = 0, 900);
+  // Show "Copied ✦"
+  overlay.style.opacity = 1;
+  setTimeout(() => overlay.style.opacity = 0, 900);
 
-  } catch (err) {
-    console.warn("Clipboard not supported, skipping copy.");
-  }
+} catch (err) {
+  console.warn("Clipboard copy failed on desktop:", err);
+}
 
   window.open(tweetUrl, "_blank");
 }
