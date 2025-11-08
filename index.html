@@ -249,16 +249,15 @@ async function shareCard() {
   const mobileScreen = document.getElementById("mobile-save-screen");
   const mobileImage = document.getElementById("mobile-save-image");
   const closeBtn = document.getElementById("mobile-close");
+  const overlay = document.getElementById("copied-overlay");
   const isMobile = /iPhone|iPad|Android/i.test(navigator.userAgent);
 
   const tweetText = `this is my Monad Mainnet Toolkit. day 1 is gonna be a movie ✦
-\nmake yours here: https://nafyn.github.io/neverland-monadtoolkit/index.html`;
-
+make yours here: https://nafyn.github.io/neverland-monadtoolkit/index.html`;
   const tweetUrl = "https://twitter.com/intent/tweet?text=" + encodeURIComponent(tweetText);
 
-  // === DESKTOP ===
+  // ---------- DESKTOP ----------
   if (!isMobile) {
-    // remove sticky to avoid crop
     card.classList.remove("sticky");
     const canvas = await html2canvas(card, { backgroundColor: null, scale: 2 });
     card.classList.add("sticky");
@@ -267,38 +266,42 @@ async function shareCard() {
     try {
       const cleanBlob = await (await fetch(dataUrl)).blob();
       await navigator.clipboard.write([new ClipboardItem({ "image/png": cleanBlob })]);
+      overlay.style.opacity = 1;
+      setTimeout(() => overlay.style.opacity = 0, 900);
     } catch (err) {
-      console.warn("Clipboard copy blocked:", err);
+      console.warn("clipboard blocked:", err);
     }
 
-    document.getElementById("copied-overlay").style.opacity = 1;
-    setTimeout(() => document.getElementById("copied-overlay").style.opacity = 0, 900);
     window.open(tweetUrl, "_blank");
     return;
   }
 
-  // === MOBILE ===
-
-  // 1) Clone card & remove Twitter button
+  // ---------- MOBILE ----------
+  // 1) Clone card
   const clone = card.cloneNode(true);
-  clone.style.position = "absolute";
-  clone.style.left = "-9999px"; // offscreen render
-  document.body.appendChild(clone);
+  clone.querySelector("#share-btn")?.remove();
 
-  const shareBtnClone = clone.querySelector("#share-btn");
-  if (shareBtnClone) shareBtnClone.remove();
+  // 2) Wrapper with background (no blur)
+  const wrapper = document.createElement("div");
+  wrapper.style.position = "absolute";
+  wrapper.style.left = "-9999px";
+  wrapper.style.padding = "40px";
+  wrapper.style.background = "radial-gradient(circle at top, #3B1477, #0C021F 70%)";
+  wrapper.style.borderRadius = "24px";
+  wrapper.appendChild(clone);
+  document.body.appendChild(wrapper);
 
-  // 2) Screenshot the clone
-  const canvas = await html2canvas(clone, { backgroundColor: null, scale: 2 });
-  document.body.removeChild(clone);
+  // 3) Capture wrapper
+  const canvas = await html2canvas(wrapper, { backgroundColor: null, scale: 2 });
+  document.body.removeChild(wrapper);
 
   const dataUrl = canvas.toDataURL("image/png");
 
-  // 3) Display fullscreen save UI
+  // 4) Show fullscreen preview to manual-save
   mobileImage.src = dataUrl;
   mobileScreen.classList.remove("hidden");
 
-  // 4) When user clicks Done → THEN open Twitter
+  // 5) User saves first → THEN taps Done → THEN we open Twitter
   closeBtn.onclick = () => {
     mobileScreen.classList.add("hidden");
     window.open(tweetUrl, "_blank");
