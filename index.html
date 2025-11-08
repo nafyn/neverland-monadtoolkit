@@ -311,6 +311,23 @@ if (!isMobile()) {
       // 1) Cloner la carte (on ne touche pas l'original)
       const clone = resultCard.cloneNode(true);
 
+      // Apply desktop spacing fix on the clone
+clone.style.paddingTop = "32px";
+clone.style.paddingBottom = "28px";
+
+clone.querySelectorAll("#result-content > div").forEach(row => {
+  row.style.marginBottom = "6px"; // ajustable : 5–8px
+});
+
+clone.querySelectorAll("#result-content span:first-child").forEach(span => {
+  span.style.opacity = "0.75";
+  span.style.letterSpacing = "0.2px";
+  span.style.paddingRight = "12px"; 
+});
+
+const powered = clone.querySelector("#powered-card");
+if (powered) powered.style.marginTop = "26px";
+
       // 2) Retirer uniquement du clone : share-btn + "Click to copy"
       clone.querySelector("#share-btn")?.remove();
       clone.querySelector("#copy-hint")?.remove();
