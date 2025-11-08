@@ -275,45 +275,33 @@ make yours here: https://nafyn.github.io/neverland-monadtoolkit/index.html`;
     window.open(tweetUrl, "_blank");
     return;
   }
-
- // === MOBILE ===
+// === MOBILE ===
 if (isMobile) {
 
-  // 1) Clone the card cleanly
+  // 1) Clone card & remove Twitter button
   const clone = card.cloneNode(true);
+  clone.style.position = "absolute";
+  clone.style.left = "-9999px"; // hors écran
 
-  // 2) Remove the share button from the clone
-  const cloneBtn = clone.querySelector("#share-btn");
-  if (cloneBtn) cloneBtn.remove();
+  // ✅ Applique le fond correct pour la capture
+  clone.style.background = "radial-gradient(circle at top, #3B1477, #0C021F 70%)";
+  clone.style.padding = "20px";
+  clone.style.borderRadius = "20px";
 
-  // 3) Style the clone to take full screen width & center content
-  clone.style.position = "fixed";
-  clone.style.left = "0";
-  clone.style.top = "0";
-  clone.style.width = "100vw";
-  clone.style.maxWidth = "100vw";
-  clone.style.padding = "24px";
-  clone.style.boxSizing = "border-box";
-  clone.style.transform = "none";
-  clone.style.background = "transparent";
-  clone.style.zIndex = "-1";
   document.body.appendChild(clone);
 
-  // 4) Capture with better resolution
-  const canvas = await html2canvas(clone, { 
-    backgroundColor: null,
-    scale: window.devicePixelRatio * 1.8
-  });
+  const shareBtnClone = clone.querySelector("#share-btn");
+  if (shareBtnClone) shareBtnClone.remove();
 
+  // 2) Screenshot du clone
+  const canvas = await html2canvas(clone, { backgroundColor: null, scale: 2 });
   document.body.removeChild(clone);
 
   const dataUrl = canvas.toDataURL("image/png");
-
-  // 5) Show fullscreen save overlay
   mobileImage.src = dataUrl;
   mobileScreen.classList.remove("hidden");
 
-  // 6) User saves, THEN tweet opens
+  // 3) Bouton "Done" → ouvre Twitter après save
   closeBtn.onclick = () => {
     mobileScreen.classList.add("hidden");
     window.open(tweetUrl, "_blank");
@@ -321,6 +309,7 @@ if (isMobile) {
 
   return;
 }
+  
 }
 
 render();
