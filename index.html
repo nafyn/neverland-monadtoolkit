@@ -264,6 +264,7 @@ function autoAdvanceIfComplete(currentGroup, categories) {
 }
   
 document.getElementById("share-btn").onclick = shareCard;
+document.getElementById("share-btn").onclick = shareCard;
 
 // --- DESKTOP CLICK-TO-COPY ---
 if (!isMobile()) {
@@ -284,60 +285,34 @@ make yours here: https://nafyn.github.io/neverland-monadtoolkit/index.html`;
 
   // Click sur la carte → copie l'image EXACTE affichée
   resultCard.addEventListener("click", async (e) => {
-  if (e.target.id === "share-btn") return; // ignorer clic bouton
+    // empêche le clic sur le bouton de déclencher la copie
+    if (e.target.id === "share-btn") return;
 
-  const overlay = document.getElementById("copied-overlay");
-  const copyHint = document.getElementById("copy-hint");
+    try {
+      const canvas = await html2canvas(resultCard, {
+        backgroundColor: null,
+        scale: window.devicePixelRatio * 2
+      });
 
-  // 1) Clone propre
-  const clone = resultCard.cloneNode(true);
+      const blob = await new Promise(res => canvas.toBlob(res, "image/png"));
+      await navigator.clipboard.write([new ClipboardItem({ "image/png": blob })]);
 
-  // retirer share + hint du clone
-  clone.querySelector("#share-btn")?.remove();
-  clone.querySelector("#copy-hint")?.remove();
+      // Feedback "Copied!"
+      overlay.style.opacity = 1;
+      copyHint.textContent = "Copied!";
+      copyHint.style.color = "#D767FF";
 
-  // 2) Ajouter un fond gradient derrière pour que l'image soit belle
-  const wrap = document.createElement("div");
-  wrap.style.position = "absolute";
-  wrap.style.left = "-99999px";
-  wrap.style.top = "0";
-  wrap.style.width = "100vw";
-  wrap.style.height = "100vh";
-  wrap.style.display = "flex";
-  wrap.style.alignItems = "center";
-  wrap.style.justifyContent = "center";
-  wrap.style.background = "radial-gradient(circle at top, #3B1477, #0C021F 70%)";
+      setTimeout(() => {
+        overlay.style.opacity = 0;
+        copyHint.textContent = "Click to copy";
+        copyHint.style.color = "rgba(255,255,255,0.6)";
+      }, 1000);
 
-  // taille de la carte export
-  clone.style.width = "560px";
-  clone.style.maxWidth = "560px";
-  clone.style.borderRadius = "20px";
-
-  wrap.appendChild(clone);
-  document.body.appendChild(wrap);
-
-  // 3) Capture
-  const canvas = await html2canvas(wrap, {
-    backgroundColor: null,
-    scale: window.devicePixelRatio * 2
+    } catch (err) {
+      console.error("copy failed:", err);
+    }
   });
-
-  document.body.removeChild(wrap);
-
-  const blob = await new Promise(res => canvas.toBlob(res, "image/png"));
-  await navigator.clipboard.write([new ClipboardItem({ "image/png": blob })]);
-
-  // 4) UI feedback
-  overlay.style.opacity = 1;
-  copyHint.textContent = "Copied!";
-  copyHint.style.color = "#D767FF";
-
-  setTimeout(() => {
-    overlay.style.opacity = 0;
-    copyHint.textContent = "Click to copy";
-    copyHint.style.color = "rgba(255,255,255,0.6)";
-  }, 1000);
-}); 
+}  
 
 async function shareCard() {
   const card = document.getElementById("result-card");
