@@ -65,9 +65,16 @@ const groups = {
   },
 };
 
-// Load saved state from localStorage
+// Load saved toolkit state on page load
 const savedState = localStorage.getItem("toolkitState");
-const state = savedState ? JSON.parse(savedState) : {};
+if (savedState) {
+  try {
+    const parsed = JSON.parse(savedState);
+    Object.assign(state, parsed);
+  } catch (e) {
+    console.error("Failed to load saved state:", e);
+  }
+}
 
 const app = document.getElementById("app");
 const resultCard = document.getElementById("result-card");
@@ -84,6 +91,22 @@ let twitterUsername = localStorage.getItem("twitterUsername") || "";
 function saveState() {
   localStorage.setItem("toolkitState", JSON.stringify(state));
   // Clear the image copied flag since toolkit changed
+  localStorage.removeItem("imageCopied");
+}
+
+// Clean up expired imageCopied flag on page load
+try {
+  const copyDataStr = localStorage.getItem("imageCopied");
+  if (copyDataStr) {
+    const copyData = JSON.parse(copyDataStr);
+    const timeDiff = Date.now() - copyData.timestamp;
+    // Remove if older than 5 minutes
+    if (timeDiff >= 300000) {
+      localStorage.removeItem("imageCopied");
+    }
+  }
+} catch (e) {
+  // Invalid data, remove it
   localStorage.removeItem("imageCopied");
 }
 
@@ -292,9 +315,13 @@ function render() {
     // Create intuitive selection status message
     let selectionStatus;
     if (selectionCount === 0) {
-      selectionStatus = `<span class="text-white/60">Pick at least 1${maxSelections > 1 ? ` (up to ${maxSelections})` : ''}</span>`;
+      selectionStatus = `<span class="text-white/60">Pick at least 1${
+        maxSelections > 1 ? ` (up to ${maxSelections})` : ""
+      }</span>`;
     } else {
-      selectionStatus = `<span class="text-[#CF6EDD]">✓ ${selectionCount} selected${maxSelections > 1 ? ` (max ${maxSelections})` : ''}</span>`;
+      selectionStatus = `<span class="text-[#CF6EDD]">✓ ${selectionCount} selected${
+        maxSelections > 1 ? ` (max ${maxSelections})` : ""
+      }</span>`;
     }
 
     container.innerHTML = `
@@ -490,9 +517,13 @@ function render() {
       // Create intuitive selection status
       let statusBadge;
       if (catSelectionCount === 0) {
-        statusBadge = `<span class="text-xs text-white/50">min 1${maxSelections > 1 ? `, up to ${maxSelections}` : ''}</span>`;
+        statusBadge = `<span class="text-xs text-white/50">min 1${
+          maxSelections > 1 ? `, up to ${maxSelections}` : ""
+        }</span>`;
       } else {
-        statusBadge = `<span class="text-xs text-[#CF6EDD]">✓ ${catSelectionCount}${maxSelections > 1 ? `/${maxSelections}` : ''}</span>`;
+        statusBadge = `<span class="text-xs text-[#CF6EDD]">✓ ${catSelectionCount}${
+          maxSelections > 1 ? `/${maxSelections}` : ""
+        }</span>`;
       }
 
       categorySection.innerHTML = `
@@ -729,7 +760,7 @@ if (!isMobile()) {
       // Mark that user has copied the image with timestamp and toolkit state
       const copyData = {
         timestamp: Date.now(),
-        toolkitHash: JSON.stringify(state) // Hash of current selections
+        toolkitHash: JSON.stringify(state), // Hash of current selections
       };
       localStorage.setItem("imageCopied", JSON.stringify(copyData));
 
@@ -923,15 +954,15 @@ async function shareCard() {
       const currentTime = Date.now();
       const timeDiff = currentTime - copyData.timestamp;
       const currentToolkitHash = JSON.stringify(state);
-      
+
       // Image is considered valid if:
       // 1. It was copied within the last 5 minutes (300000ms)
       // 2. The toolkit hasn't changed since copying
       const isRecent = timeDiff < 300000; // 5 minutes
       const isUnchanged = copyData.toolkitHash === currentToolkitHash;
-      
+
       hasImageCopied = isRecent && isUnchanged;
-      
+
       // If it's expired or changed, remove the flag
       if (!hasImageCopied) {
         localStorage.removeItem("imageCopied");
@@ -962,11 +993,11 @@ async function shareCard() {
     if (hasImageCopied) {
       // Reset the flag for next time
       localStorage.removeItem("imageCopied");
-      
+
       // Restore button state
       shareBtn.innerHTML = originalText;
       shareBtn.disabled = false;
-      
+
       // Open Twitter directly
       window.open(tweetUrl, "_blank");
       return;
