@@ -67,19 +67,31 @@
     <!-- Robots -->
     <meta name="robots" content="index, follow" />
 
-    <!-- Google Fonts -->
+    <!-- Preconnect to external resources -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
+    <link rel="dns-prefetch" href="https://cdn.tailwindcss.com" />
+    
+    <!-- Google Fonts -->
     <link
       href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700;800;900&family=Cinzel+Decorative:wght@400;700;900&family=Quicksand:wght@300;400;500;600;700&display=swap"
       rel="stylesheet"
     />
+
+    <!-- Critical inline styles for FCP -->
+    <style>
+      body{background:linear-gradient(135deg,#200041 0%,#3d1766 50%,#200041 100%);min-height:100vh;margin:0;font-family:system-ui,-apple-system,sans-serif}
+    </style>
 
     <!-- Tailwind CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
 
     <!-- Custom Styles -->
     <link rel="stylesheet" href="css/styles.css" />
+    
+    <!-- Preload critical scripts -->
+    <link rel="preload" href="js/app.js" as="script" />
   </head>
 
   <body class="min-h-screen text-white">
@@ -300,10 +312,7 @@
     </footer>
 
     <!-- HTML2Canvas Library -->
-    <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
-
-    <!-- Framer Motion -->
-    <script src="https://cdn.jsdelivr.net/npm/framer-motion@11.0.8/dist/framer-motion.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 
     <!-- Vercel Speed Insights -->
     <script>
@@ -326,6 +335,6 @@
     <script defer src="/_vercel/insights/script.js"></script>
 
     <!-- App Script -->
-    <script src="js/app.js"></script>
+    <script defer src="js/app.js"></script>
   </body>
 </html>
