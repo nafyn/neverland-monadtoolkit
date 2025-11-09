@@ -65,7 +65,10 @@ const groups = {
   },
 };
 
-const state = {};
+// Load saved state from localStorage
+const savedState = localStorage.getItem("toolkitState");
+const state = savedState ? JSON.parse(savedState) : {};
+
 const app = document.getElementById("app");
 const resultCard = document.getElementById("result-card");
 const resultContent = document.getElementById("result-content");
@@ -76,6 +79,13 @@ let expandedGroup = "DeFi"; // Start with first group expanded for cleaner UI
 // Twitter username handling
 const twitterUsernameInput = document.getElementById("twitter-username");
 let twitterUsername = localStorage.getItem("twitterUsername") || "";
+
+// Save state to localStorage
+function saveState() {
+  localStorage.setItem("toolkitState", JSON.stringify(state));
+  // Clear the image copied flag since toolkit changed
+  localStorage.removeItem("imageCopied");
+}
 
 // Load saved username
 if (twitterUsername) {
@@ -250,6 +260,7 @@ function render() {
         // Reset to first step
         currentStep = 0;
         expandedGroup = "DeFi";
+        saveState();
         updateCard();
         render();
       };
@@ -278,10 +289,18 @@ function render() {
     const maxSelections =
       options.length === 2 ? 1 : options.length === 3 ? 2 : 3;
 
+    // Create intuitive selection status message
+    let selectionStatus;
+    if (selectionCount === 0) {
+      selectionStatus = `<span class="text-white/60">Pick at least 1${maxSelections > 1 ? ` (up to ${maxSelections})` : ''}</span>`;
+    } else {
+      selectionStatus = `<span class="text-[#CF6EDD]">✓ ${selectionCount} selected${maxSelections > 1 ? ` (max ${maxSelections})` : ''}</span>`;
+    }
+
     container.innerHTML = `
       <div class="flex items-center justify-between mb-2">
         <h2 class="text-2xl font-semibold">${categoryName}</h2>
-        <span class="text-sm text-white/80">${selectionCount}/${maxSelections} selected</span>
+        <span class="text-sm">${selectionStatus}</span>
       </div>
     `;
 
@@ -333,6 +352,7 @@ function render() {
             state[categoryName].push(option.name);
           }
         }
+        saveState();
         updateCard();
         render();
       };
@@ -467,6 +487,14 @@ function render() {
       const maxSelections =
         options.length === 2 ? 1 : options.length === 3 ? 2 : 3;
 
+      // Create intuitive selection status
+      let statusBadge;
+      if (catSelectionCount === 0) {
+        statusBadge = `<span class="text-xs text-white/50">min 1${maxSelections > 1 ? `, up to ${maxSelections}` : ''}</span>`;
+      } else {
+        statusBadge = `<span class="text-xs text-[#CF6EDD]">✓ ${catSelectionCount}${maxSelections > 1 ? `/${maxSelections}` : ''}</span>`;
+      }
+
       categorySection.innerHTML = `
         <div class="${separatorClass}">
           <div class="flex items-center justify-between">
@@ -475,7 +503,7 @@ function render() {
                 <span class="text-[#CF6EDD] text-xs">✦</span>
                 ${category}
               </h3>
-              <span class="text-xs text-white/50">${catSelectionCount}/${maxSelections}</span>
+              ${statusBadge}
             </div>
             <div class='flex flex-wrap gap-3 justify-end content-start' data-buttons></div>
           </div>
@@ -527,6 +555,7 @@ function render() {
               state[category].push(option.name);
             }
           }
+          saveState();
           updateCard();
           render();
         };
@@ -613,6 +642,9 @@ function updateCard() {
         expandedGroup = group;
       }
 
+      // Save state
+      saveState();
+
       // Update UI
       updateCard();
       render();
@@ -693,6 +725,13 @@ if (!isMobile()) {
       // Show copied state
       copyHint.textContent = "Copied ✓";
       copyHint.style.color = "rgba(207, 110, 221, 1)";
+
+      // Mark that user has copied the image with timestamp and toolkit state
+      const copyData = {
+        timestamp: Date.now(),
+        toolkitHash: JSON.stringify(state) // Hash of current selections
+      };
+      localStorage.setItem("imageCopied", JSON.stringify(copyData));
 
       // Reset after 2 seconds
       setTimeout(() => {
@@ -875,6 +914,34 @@ async function shareCard() {
   const closeBtn = document.getElementById("mobile-close");
   const shareBtn = document.getElementById("share-btn");
 
+  // Check if user already copied the image and it's still valid
+  let hasImageCopied = false;
+  try {
+    const copyDataStr = localStorage.getItem("imageCopied");
+    if (copyDataStr) {
+      const copyData = JSON.parse(copyDataStr);
+      const currentTime = Date.now();
+      const timeDiff = currentTime - copyData.timestamp;
+      const currentToolkitHash = JSON.stringify(state);
+      
+      // Image is considered valid if:
+      // 1. It was copied within the last 5 minutes (300000ms)
+      // 2. The toolkit hasn't changed since copying
+      const isRecent = timeDiff < 300000; // 5 minutes
+      const isUnchanged = copyData.toolkitHash === currentToolkitHash;
+      
+      hasImageCopied = isRecent && isUnchanged;
+      
+      // If it's expired or changed, remove the flag
+      if (!hasImageCopied) {
+        localStorage.removeItem("imageCopied");
+      }
+    }
+  } catch (e) {
+    // Invalid data, remove it
+    localStorage.removeItem("imageCopied");
+  }
+
   // Show loading state
   const originalText = shareBtn.innerHTML;
   shareBtn.disabled = true;
@@ -890,6 +957,20 @@ async function shareCard() {
     const tweetText = `This is my Monad Mainnet Toolkit. Day 1 is gonna be a movie ✦ Make yours here: https://toolkit.neverland.money`;
     const tweetUrl =
       "https://twitter.com/intent/tweet?text=" + encodeURIComponent(tweetText);
+
+    // If user already copied the image, skip the save prompt and go directly to Twitter
+    if (hasImageCopied) {
+      // Reset the flag for next time
+      localStorage.removeItem("imageCopied");
+      
+      // Restore button state
+      shareBtn.innerHTML = originalText;
+      shareBtn.disabled = false;
+      
+      // Open Twitter directly
+      window.open(tweetUrl, "_blank");
+      return;
+    }
 
     // Generate canvas
     const canvas = await generateToolkitCanvas();
@@ -916,6 +997,8 @@ async function shareCard() {
 
     cancelBtn.onclick = () => {
       mobileScreen.classList.add("hidden");
+      // Reset the flag so they'll be asked again next time
+      localStorage.removeItem("imageCopied");
     };
 
     closeBtn.onclick = () => {
@@ -927,6 +1010,8 @@ async function shareCard() {
     confirmYes.onclick = () => {
       confirmModal.classList.add("hidden");
       mobileScreen.classList.add("hidden");
+      // Reset the flag so they'll be asked again next time
+      localStorage.removeItem("imageCopied");
       window.open(tweetUrl, "_blank");
     };
 
@@ -950,6 +1035,9 @@ document.getElementById("clear-btn").onclick = () => {
 
   // Reset to first group
   expandedGroup = "DeFi";
+
+  // Save cleared state
+  saveState();
 
   // Update UI
   updateCard();
