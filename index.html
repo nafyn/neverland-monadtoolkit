@@ -1,465 +1,331 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>My Monad Day 1 Toolkit</title>
-  <link rel="icon" type="image/png" href="logomark_light.png" />
-  <link rel="icon" type="image/svg+xml" href="logomark_light.svg" />
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#200041" />
+    <title>Monad Day 1 | Neverland Money</title>
+    <meta
+      name="description"
+      content="Build your personalized Monad-Native Mainnet Day 1 Toolkit. Select your favorite Monad native DeFi apps, and tools to be ready for Monad's launch. Powered by Neverland."
+    />
 
-  <!-- Tailwind CDN -->
-  <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Favicons -->
+    <link rel="icon" type="image/x-icon" href="favicon.ico" />
+    <link rel="icon" type="image/svg+xml" href="icon0.svg" />
+    <link rel="icon" type="image/png" href="icon1.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="apple-icon.png" />
+    <link rel="manifest" href="manifest.json" />
 
-  <style>
-    body {
-      background: radial-gradient(circle at top, #3B1477, #0C021F 70%);
-      font-family: system-ui, sans-serif;
-    }
+    <link
+      rel="canonical"
+      href="https://toolkit.neverland.money/"
+    />
 
-    #result-card:hover {
-  box-shadow: 0 0 22px rgba(215, 103, 255, 0.28);
-  transform: scale(1.01);
-  transition: 0.18s ease-out;
-}
-  </style>
-</head>
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta
+      property="og:url"
+      content="https://toolkit.neverland.money/"
+    />
+    <meta property="og:title" content="Monad Day 1 | Neverland Money" />
+    <meta
+      property="og:description"
+      content="Build your personalized Monad-Native Mainnet Day 1 Toolkit. Select your favorite Monad native DeFi apps, and tools to be ready for Monad's launch."
+    />
+    <meta
+      property="og:image"
+      content="https://toolkit.neverland.money/img/og-toolkit.webp"
+    />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="675" />
+    <meta property="og:site_name" content="Neverland Money" />
+    <meta property="og:locale" content="en_US" />
 
-<body class="min-h-screen text-white">
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta
+      name="twitter:url"
+      content="https://toolkit.neverland.money/"
+    />
+    <meta name="twitter:title" content="Monad Day 1 | Neverland Money" />
+    <meta
+      name="twitter:description"
+      content="Build your personalized Monad-Native Mainnet Day 1 Toolkit. Select your favorite Monad native DeFi apps, and tools to be ready for Monad's launch."
+    />
+    <meta
+      name="twitter:image"
+      content="https://toolkit.neverland.money/img/og-toolkit.webp"
+    />
 
-<header class="w-full bg-black/40 backdrop-blur-md border-b border-white/10 py-4 px-6 flex items-center gap-3">
-  <div class="w-3 h-3 rounded-full" style="background: radial-gradient(circle, #D767FF 0%, #8A4BFF 90%); box-shadow: 0 0 12px #D767FF;"></div>
-  <span class="text-xl font-semibold tracking-wide text-white">Monad Day 1 Toolkit</span>
-</header>
+    <!-- Keywords -->
+    <meta
+      name="keywords"
+      content="Monad, DeFi, decentralized finance, lending, blockchain, crypto, Neverland, mainnet, toolkit, DEX, NFT, Web3, Monad Native"
+    />
 
-<div id="mobile-progress" class="md:hidden flex justify-center gap-2 mt-6"></div>
+    <!-- Robots -->
+    <meta name="robots" content="index, follow" />
 
-<div class="w-full max-w-5xl mx-auto space-y-4 mt-10 px-4">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700;800;900&family=Cinzel+Decorative:wght@400;700;900&family=Quicksand:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
 
-  <div class="grid grid-cols-1 md:grid-cols-3 gap-10">
-    <div id="app" class="md:col-span-2 space-y-8"></div>
+    <!-- Tailwind CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
 
-    <div id="result-card" class="h-fit sticky top-10 p-4 rounded-xl bg-white/5 border border-white/10 backdrop-blur shadow-lg hidden relative">
-  <h3 class="text-lg font-semibold mb-2 text-center">My Toolkit</h3>
-  <p class="text-sm text-white/70 text-center mb-4">~ on Mainnet Day 1 ~</p>
+    <!-- Custom Styles -->
+    <link rel="stylesheet" href="css/styles.css" />
+  </head>
 
-      <div id="copied-overlay" class="pointer-events-none opacity-0 transition-opacity duration-500
-        fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 
-        px-6 py-3 rounded-xl border border-[#D767FF] text-[#D767FF] bg-black/40 backdrop-blur-lg">
-          Copied ✦
-      </div>
-
-  <div id="result-content" class="space-y-1 text-sm mb-4"></div>
-   <p id="powered-card" class="text-[11px] text-white/35 mt-3 text-right">
-    Powered by Neverland ✦
-  </p>
-
-  <p id="copy-hint" class="text-[11px] text-white/30 text-center opacity-60 mt-1 select-none">
-  Click to copy
-</p>
-      
-  <!-- SHARE BUTTON -->
-  <button id="share-btn"
-    class="w-full mt-2 py-2 rounded-lg text-sm font-medium bg-gradient-to-r from-[#D767FF] to-[#8A4BFF] hover:opacity-90 transition">
-    Share it on X ✦
-  </button>
-</div>
-  </div>
-</div>
-
-<div id="mobile-save-screen" class="fixed inset-0 bg-black/90 backdrop-blur-lg hidden z-50 flex flex-col justify-center items-center p-6 text-center">
-  <img id="mobile-save-image" class="max-w-[90%] max-h-[70%] rounded-xl shadow-2xl" />
-  <p class="text-white/80 mt-5 text-sm">Tap & hold the image → Save to Photos</p>
-
-  <button id="mobile-close" class="mt-6 px-5 py-2 text-sm bg-white/10 border border-white/30 rounded-lg text-white">
-    Done ✦
-  </button>
-</div>
-
-<footer class="fixed bottom-3 left-3 text-xs text-white/40">
-  Powered by <a href="https://x.com/Neverland_Money" target="_blank" class="text-[#D767FF] hover:underline">Neverland ✦</a>
-</footer>  
-  
-<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
-<script>
-const groups = {
-  "Infra": {
-    Wallets: ["Phantom", "Backpack", "Metamask", "Rabby", "Haha Wallet"],
-    Bridges: ["Wormhole", "LayerZero"]
-  },
-  "DeFi": {
-    DEX: ["Kuru", "Uniswap", "LFJ", "Curve", "Purps", "Monday Trade"],
-    Lending: ["Neverland", "Euler", "Curvance"],
-    Perps: ["Perpl", "Drake"],
-    "Liquid Staking": ["Fastlane", "Magma", "Kintsu"]
-  },
-  "Ecosystem": {
-    Launchpad: ["Alloca", "Cult"],
-    NFTs: ["OpenSea", "Magic Eden", "Kingdomly", "Poply"],
-    "Prediction Markets": ["Kizzy", "RBS", "Levr"]
-  }
-};
-
-const state = {};
-let openGroup = "Infra"; // groupe visible par défaut
-  
-const app = document.getElementById("app");
-const resultCard = document.getElementById("result-card");
-const resultContent = document.getElementById("result-content");
-
-let currentStep = 0;
-
-function isMobile() {
-  return window.matchMedia("(max-width: 768px)").matches;
-}
-
-function render() {
-  app.innerHTML = "";
-
-  const groupList = Object.entries(groups);
-  const flatCategories = groupList.flatMap(([_, cats]) => Object.keys(cats));
-
-  // --- MOBILE STEP MODE ---
-  if (isMobile()) {
-    const categoryName = flatCategories[currentStep];
-    const options = groupList.flatMap(([_, cats]) => cats[categoryName] ?? []);
-
-    const container = document.createElement("div");
-    container.className = "space-y-4";
-
-    container.innerHTML = `<h2 class="text-2xl font-semibold">${categoryName}</h2>`;
-
-    const buttons = document.createElement("div");
-    buttons.className = "flex flex-wrap gap-3";
-
-    options.forEach(option => {
-      const active = state[categoryName] === option;
-      const btn = document.createElement("button");
-      btn.className = `
-        px-4 py-2 rounded-full text-sm border transition
-        ${active 
-          ? "bg-gradient-to-r from-[#D767FF] to-[#8A4BFF] border-transparent shadow-md scale-105"
-          : "bg-white/5 border-white/20 hover:border-white/40"}
-      `;
-      btn.textContent = option;
-      btn.onclick = () => { state[categoryName] = option; updateCard(); render(); };
-      buttons.appendChild(btn);
-    });
-
-    container.appendChild(buttons);
-
-    const nav = document.createElement("div");
-    nav.className = "flex justify-between mt-6 text-sm";
-
-    nav.innerHTML = `
-      <button ${currentStep === 0 ? "disabled" : ""} class="px-4 py-2 bg-white/10 border border-white/20 rounded-lg">Back</button>
-      <button class="px-4 py-2 bg-gradient-to-r from-[#D767FF] to-[#8A4BFF] rounded-lg">Next</button>
-    `;
-
-    nav.children[0].onclick = () => { currentStep--; render(); };
-    nav.children[1].onclick = () => { if (currentStep < flatCategories.length - 1) currentStep++; render(); };
-
-    container.appendChild(nav);
-    app.appendChild(container);
-
-    const progress = document.getElementById("mobile-progress");
-    progress.innerHTML = flatCategories.map((_, i) => `
-      <div class="transition-all duration-300 ${i === currentStep ? "w-6 bg-[#D767FF]" : "w-2 bg-white/30"} h-2 rounded-full"></div>
-    `).join("");
-
-    return;
-  }
-
-  // --- DESKTOP MODE ---
-Object.entries(groups).forEach(([groupName, categories]) => {
-  const isOpen = openGroup === groupName;
-
-  const groupBlock = document.createElement("div");
-  groupBlock.className = "rounded-xl bg-white/5 border border-white/10 backdrop-blur transition-all";
-
-  // header
-  const header = document.createElement("div");
-  header.className = "flex justify-between items-center p-4 cursor-pointer select-none";
-  header.innerHTML = `
-    <h2 class="text-2xl font-semibold">${groupName}</h2>
-    <span class="transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}">▼</span>
-  `;
-  header.onclick = () => { openGroup = groupName; render(); };
-  groupBlock.appendChild(header);
-
-  // only show the inner content when open
-  if (isOpen) {
-    const inner = document.createElement("div");
-    inner.className = "p-4 space-y-4 border-t border-white/10";
-
-    Object.entries(categories).forEach(([category, options]) => {
-      const section = document.createElement("div");
-      section.className = "space-y-2";
-
-      section.innerHTML = `<h3 class="text-lg font-medium">${category}</h3><div class='flex flex-wrap gap-3'></div>`;
-      const buttons = section.querySelector("div");
-
-      options.forEach(option => {
-        const chosen = state[category] === option;
-        const btn = document.createElement("button");
-        btn.className = `
-          px-4 py-2 rounded-full text-sm border transition
-          ${chosen 
-            ? "bg-gradient-to-r from-[#D767FF] to-[#8A4BFF] border-transparent shadow-md scale-105"
-            : "bg-white/5 border-white/20 hover:border-white/40"}
-        `;
-        btn.textContent = option;
-        btn.onclick = () => { 
-        state[category] = option;
-        updateCard();
-        autoAdvanceIfComplete(groupName, categories);
-        render(); // ← REFRESH pour mettre la couleur active immédiatement
-      };
-
-        buttons.appendChild(btn);
-      });
-
-      inner.appendChild(section);
-    });
-
-    groupBlock.appendChild(inner);
-  }
-
-  app.appendChild(groupBlock);
-});
-}
-
-function updateCard() {
-  let html = "";
-
-  Object.entries(groups).forEach(([groupName, categories]) => {
-    Object.keys(categories).forEach(category => {
-      const val = state[category] || "";
-      html += `
-        <div class="flex justify-between">
-          <span class="text-white/60">${category}</span>
-          <span>${val}</span>
+  <body class="min-h-screen text-white">
+    <header
+      class="w-full bg-black/20 backdrop-blur-md border-b border-white/10 py-4 md:py-4 px-4 md:px-6 flex items-center justify-center"
+    >
+      <div class="flex items-center gap-2 md:gap-4">
+        <div class="flex items-center gap-1.5 md:gap-2">
+          <img
+            src="img/neverland_logomark.png"
+            alt="Neverland Logo"
+            class="h-6 w-6 md:h-8 md:w-8"
+          />
+          <span
+            class="hidden md:inline font-cinzel-decorative text-sm md:text-2xl font-light tracking-wide text-white"
+          >
+            Neverland
+          </span>
         </div>
-      `;
-    });
-  });
+        <div class="h-4 md:h-6 w-px bg-white/20"></div>
+        <div class="flex items-center gap-1 md:gap-2">
+          <span
+            class="font-cinzel text-lg md:text-2xl font-light tracking-tight md:tracking-wide text-white leading-tight"
+          >
+            <span class="font-cinzel-decorative">M</span>onad -
+            <span class="font-cinzel-decorative">N</span>ative
+            <span class="font-cinzel-decorative">D</span>ay 1
+            <span class="font-cinzel-decorative">T</span>oolkit
+          </span>
+        </div>
+      </div>
+    </header>
 
-  resultContent.innerHTML = html;
-  resultCard.classList.remove("hidden");
+    <div
+      id="mobile-progress"
+      class="md:hidden flex justify-center gap-2 mt-6"
+    ></div>
 
-  // ✅ Harmonisation desktop visible (pas la capture)
-  if (!isMobile()) {
-    resultCard.style.paddingTop = "32px";
-    resultCard.style.paddingBottom = "28px";
+    <div
+      id="main-container"
+      class="w-full max-w-7xl mx-auto mt-4 md:mt-10 px-4"
+    >
+      <div id="content-inner" class="mx-auto" style="max-width: 1280px">
+        <div
+          id="content-wrapper"
+          class="grid grid-cols-1 md:grid-cols-[2fr_1fr] gap-10"
+        >
+          <div id="app" class="space-y-8"></div>
 
-    document.querySelectorAll("#result-content > div").forEach(row => {
-      row.style.marginBottom = "6px";
-    });
+          <div
+            id="result-card"
+            class="hidden md:block h-fit sticky top-10 p-4 rounded-xl bg-[#2a0b52]/50 border border-[#3e2260]/50 shadow-lg relative transition-all duration-300"
+          >
+            <h3 class="text-lg font-semibold mb-2 text-center">My Toolkit</h3>
+            <p class="text-sm text-white/70 text-center mb-2">
+              ~ on Mainnet Day 1 ~
+            </p>
 
-    document.querySelectorAll("#result-content span:first-child").forEach(span => {
-      span.style.opacity = "0.75";
-      span.style.letterSpacing = "0.2px";
-      span.style.paddingRight = "12px";
-    });
+            <!-- Progress Bar -->
+            <div class="mb-4">
+              <div class="flex justify-between items-center mb-1">
+                <span id="completion-text" class="text-xs text-white/60"
+                  >0/9 completed</span
+                >
+                <span
+                  id="completion-percent"
+                  class="text-xs font-semibold text-[#D767FF]"
+                  >0%</span
+                >
+              </div>
+              <div
+                class="w-full h-1.5 bg-white/10 rounded-full overflow-hidden"
+              >
+                <div
+                  id="completion-bar"
+                  class="h-full bg-gradient-to-r from-[#C757D8] to-[#9A00B2] transition-all duration-500 ease-out"
+                  style="width: 0%"
+                ></div>
+              </div>
+            </div>
 
-    const powered = document.getElementById("powered-card");
-    if (powered) powered.style.marginTop = "26px";
-  }
-}
+            <!-- Twitter Username Input -->
+            <div class="mb-4">
+              <label
+                for="twitter-username"
+                class="block text-xs text-white/60 mb-1.5"
+              >
+                Twitter Handle (optional)
+              </label>
+              <div class="relative">
+                <span
+                  class="absolute left-3 top-1/2 -translate-y-1/2 text-white/40 text-sm"
+                  >@</span
+                >
+                <input
+                  type="text"
+                  id="twitter-username"
+                  placeholder="username"
+                  class="w-full pl-7 pr-3 py-2 text-sm bg-white/5 border border-white/10 rounded-lg text-white placeholder:text-white/30 focus:outline-none focus:border-[#CF6EDD]/50 focus:bg-white/10 transition-colors"
+                />
+              </div>
+            </div>
 
-function autoAdvanceIfComplete(currentGroup, categories) {
-  // Check if every category inside currentGroup has one choice
-  const allChosen = Object.keys(categories).every(cat => state[cat]);
+            <div
+              id="copied-overlay"
+              class="pointer-events-none opacity-0 transition-opacity duration-500 fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 px-6 py-3 rounded-xl border border-[#D767FF] text-[#D767FF] bg-black/40 backdrop-blur-lg"
+            >
+              Copied
+            </div>
 
-  if (!allChosen) return;
+            <div id="result-content" class="space-y-1 text-sm mb-4"></div>
 
-  const groupNames = Object.keys(groups);
-  const currentIndex = groupNames.indexOf(currentGroup);
+            <p
+              id="copy-hint"
+              class="hidden text-[11px] text-white/30 text-center mt-1 select-none pointer-events-none"
+              style="transition: none"
+            >
+              Click to copy
+            </p>
 
-  if (currentIndex < groupNames.length - 1) {
-    openGroup = groupNames[currentIndex + 1];
-  }
+            <!-- ACTION BUTTONS -->
+            <div class="flex gap-2 mt-2">
+              <button
+                id="clear-btn"
+                class="flex-1 inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-full font-medium transition-colors px-4 py-2.5 text-sm border border-white/10 hover:border-white/15 hover:bg-white/5 hover:text-white"
+              >
+                Reset
+              </button>
+              <button
+                id="share-btn"
+                disabled
+                class="flex-[2] inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-full font-medium transition-colors px-4 py-2.5 text-sm bg-gradient-to-b from-[#C757D8] to-[#9A00B2] text-white hover:from-[#CF6EDD] hover:to-[#B500D1] active:from-[#9125A1] active:to-[#9A00B2] disabled:opacity-40 disabled:cursor-not-allowed"
+              >
+                Share on X
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
 
-  render();
-}
-  
-document.getElementById("share-btn").onclick = shareCard;
+    <!-- Confirmation Modal -->
+    <div
+      id="confirm-modal"
+      class="fixed inset-0 bg-black/80 backdrop-blur-lg hidden z-[60] flex items-center justify-center p-6"
+    >
+      <div
+        class="bg-gradient-to-b from-[#2a0b52] to-[#1a0532] border border-[#CF6EDD]/30 rounded-2xl p-6 max-w-sm w-full shadow-2xl"
+      >
+        <h3 class="text-xl font-semibold text-white mb-3 text-center">
+          Save Your Image
+        </h3>
+        <p class="text-white/70 text-center mb-6">
+          Have you saved your image to your device?
+        </p>
+        <div class="flex gap-3">
+          <button
+            id="confirm-no"
+            class="flex-1 inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-full font-medium transition-colors px-6 py-3 text-sm bg-white/5 text-white/70 border border-white/20 hover:bg-white/10 hover:text-white hover:border-white/30"
+          >
+            Not Yet
+          </button>
+          <button
+            id="confirm-yes"
+            class="flex-1 inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-full font-medium transition-colors px-6 py-3 text-sm bg-gradient-to-b from-[#C757D8] to-[#9A00B2] text-white hover:from-[#CF6EDD] hover:to-[#B500D1]"
+          >
+            Yes, Share ✦
+          </button>
+        </div>
+      </div>
+    </div>
 
-// --- DESKTOP CLICK-TO-COPY ---
-if (!isMobile()) {
-  const overlay = document.getElementById("copied-overlay");
-  const copyHint = document.getElementById("copy-hint");
+    <div
+      id="mobile-save-screen"
+      class="fixed inset-0 bg-black/90 backdrop-blur-lg hidden z-50 flex flex-col justify-center items-center p-6 text-center"
+    >
+      <img
+        id="mobile-save-image"
+        class="max-w-[90%] max-h-[70%] rounded-xl shadow-2xl cursor-pointer hover:opacity-90 transition-opacity"
+      />
+      <p class="text-white/80 mt-5 text-sm">
+        Tap & hold the image → Save to Photos
+      </p>
 
-  resultCard.style.cursor = "pointer";
+      <div class="flex gap-3 mt-6">
+        <button
+          id="mobile-cancel"
+          class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-full font-medium transition-colors px-6 py-2.5 text-sm bg-white/5 text-white/70 border border-white/20 hover:bg-white/10 hover:text-white hover:border-white/30"
+        >
+          Cancel
+        </button>
+        <button
+          id="mobile-close"
+          class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-full font-medium transition-colors px-6 py-2.5 text-sm bg-gradient-to-b from-[#C757D8] to-[#9A00B2] text-white hover:from-[#CF6EDD] hover:to-[#B500D1]"
+        >
+          Share
+        </button>
+      </div>
+    </div>
 
-  resultCard.addEventListener("click", async (e) => {
-    if (e.target.id === "share-btn") return;
+    <footer
+      class="fixed bottom-3 left-0 right-0 text-sm text-white/80 text-center"
+    >
+      Made by
+      <a
+        href="https://x.com/pince_croco"
+        target="_blank"
+        class="font-cinzel-decorative text-white/80 hover:underline hover:text-white transition-colors"
+        >pince croco</a
+      >
+      🤍 Powered by
+      <a
+        href="https://x.com/Neverland_Money"
+        target="_blank"
+        class="font-cinzel-decorative text-white/80 hover:underline hover:text-white transition-colors"
+        >Neverland</a
+      >
+    </footer>
 
-    try {
-      // 1) Cloner la carte (on ne touche pas l'original)
-      const clone = resultCard.cloneNode(true);
+    <!-- HTML2Canvas Library -->
+    <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 
-      // Apply desktop spacing fix on the clone
-clone.style.paddingTop = "32px";
-clone.style.paddingBottom = "28px";
+    <!-- Framer Motion -->
+    <script src="https://cdn.jsdelivr.net/npm/framer-motion@11.0.8/dist/framer-motion.js"></script>
 
-clone.querySelectorAll("#result-content > div").forEach(row => {
-  row.style.marginBottom = "6px"; // ajustable : 5–8px
-});
+    <!-- Vercel Speed Insights -->
+    <script>
+      window.si =
+        window.si ||
+        function () {
+          (window.siq = window.siq || []).push(arguments);
+        };
+    </script>
+    <script defer src="/_vercel/speed-insights/script.js"></script>
 
-clone.querySelectorAll("#result-content span:first-child").forEach(span => {
-  span.style.opacity = "0.75";
-  span.style.letterSpacing = "0.2px";
-  span.style.paddingRight = "12px"; 
-});
+    <!-- Vercel Analytics -->
+    <script>
+      window.va =
+        window.va ||
+        function () {
+          (window.vaq = window.vaq || []).push(arguments);
+        };
+    </script>
+    <script defer src="/_vercel/insights/script.js"></script>
 
-const powered = clone.querySelector("#powered-card");
-if (powered) powered.style.marginTop = "26px";
-
-      // 2) Retirer uniquement du clone : share-btn + "Click to copy"
-      clone.querySelector("#share-btn")?.remove();
-      clone.querySelector("#copy-hint")?.remove();
-
-      // 3) Préparer une zone de capture hors-écran avec le fond correct
-      const temp = document.createElement("div");
-      temp.style.position = "absolute";
-      temp.style.left = "-99999px";
-      temp.style.top = "0";
-      temp.style.padding = "32px";
-      temp.style.background = "radial-gradient(circle at top, #3B1477, #0C021F 70%)";
-      temp.style.display = "inline-block";
-      temp.appendChild(clone);
-      document.body.appendChild(temp);
-
-      // 4) Capture
-      const canvas = await html2canvas(temp, {
-        backgroundColor: null,
-        scale: window.devicePixelRatio * 2
-      });
-
-      document.body.removeChild(temp);
-
-      // 5) Copier dans le presse-papier
-      const blob = await new Promise(res => canvas.toBlob(res, "image/png"));
-      await navigator.clipboard.write([new ClipboardItem({ "image/png": blob })]);
-
-      // 6) Feedback ✦
-      overlay.style.opacity = 1;
-      copyHint.textContent = "Copied!";
-      copyHint.style.color = "#D767FF";
-
-      setTimeout(() => {
-        overlay.style.opacity = 0;
-        copyHint.textContent = "Click to copy";
-        copyHint.style.color = "rgba(255,255,255,0.6)";
-      }, 900);
-
-    } catch(err) {
-      console.error(err);
-    }
-  });
-}
-
-async function shareCard() {
-  const card = document.getElementById("result-card");
-  const mobileScreen = document.getElementById("mobile-save-screen");
-  const mobileImage = document.getElementById("mobile-save-image");
-  const closeBtn = document.getElementById("mobile-close");
-  const overlay = document.getElementById("copied-overlay");
-  const isMobile = /iPhone|iPad|Android/i.test(navigator.userAgent);
-
-  const tweetText = `this is my Monad Mainnet Toolkit. day 1 is gonna be a movie ✦
-make yours here: https://nafyn.github.io/neverland-monadtoolkit/index.html`;
-  const tweetUrl = "https://twitter.com/intent/tweet?text=" + encodeURIComponent(tweetText);
-  
-// === MOBILE ===
-{
-  const tweetText = `this is my Monad Mainnet Toolkit. day 1 is gonna be a movie ✦
-make yours here: https://nafyn.github.io/neverland-monadtoolkit/index.html`;
-  const tweetUrl = "https://twitter.com/intent/tweet?text=" + encodeURIComponent(tweetText);
-
-  // 1) Cloner la carte
-  const card = document.getElementById("result-card");
-  const mobileScreen = document.getElementById("mobile-save-screen");
-  const mobileImage  = document.getElementById("mobile-save-image");
-  const closeBtn     = document.getElementById("mobile-close");
-
-    const clone = card.cloneNode(true);
-
-  // retirer le bouton du clone
-  const btn = clone.querySelector("#share-btn");
-  if (btn) btn.remove();
-
-  // ✅ supprimer le powered déjà présent dans la carte (ce qui cause le doublon)
-  const oldPowered = clone.querySelector("#powered-card");
-  if (oldPowered) oldPowered.remove();
-
-  // éviter les artefacts iOS (html2canvas ne gère pas backdrop-filter)
-  clone.classList.remove("backdrop-blur");
-  clone.style.backdropFilter = "none";
-
-  // 2) Construire un conteneur temporaire HORS-ÉCRAN avec le BON fond
-  const temp = document.createElement("div");
-  temp.style.position = "absolute";
-  temp.style.left = "-99999px";
-  temp.style.top = "0";
-  temp.style.width = "100vw";
-  temp.style.minHeight = "100vh";
-  temp.style.padding = "24px";
-  temp.style.boxSizing = "border-box";
-  temp.style.display = "flex";
-  temp.style.alignItems = "center";
-  temp.style.justifyContent = "center";
-  // ✅ même gradient que ta page
-  temp.style.background = "radial-gradient(circle at top, #3B1477, #0C021F 70%)";
-
-  // 3) Forcer une largeur jolie (plein écran mobile, sans déformer)
-  clone.style.width = "92vw";
-  clone.style.maxWidth = "640px";
-  clone.style.margin = "0 auto";
-  clone.style.borderRadius = "20px";
-
-  // === Ajouter "Powered by Neverland ✦" dans l'image exportée (non cliquable) ===
-const poweredClone = document.createElement("p");
-poweredClone.textContent = "Powered by Neverland ✦";
-poweredClone.style.position = "absolute";
-poweredClone.style.right = "14px";
-poweredClone.style.bottom = "14px";
-poweredClone.style.fontSize = "12px";
-poweredClone.style.color = "rgba(255,255,255,0.55)";
-poweredClone.style.pointerEvents = "none"; // sécurité : ne casse aucun click
-clone.style.position = "relative"; // nécessaire pour l'ancrage en bas-gauche
-clone.appendChild(poweredClone);
-
-  // ajouter et capturer
-  temp.appendChild(clone);
-  document.body.appendChild(temp);
-
-  const canvas = await html2canvas(temp, {
-    backgroundColor: null,
-    scale: window.devicePixelRatio * 1.6
-  });
-
-  // nettoyer
-  document.body.removeChild(temp);
-
-  // 4) Afficher l’UI de sauvegarde (tap & hold → Save Image)
-  const dataUrl = canvas.toDataURL("image/png");
-  mobileImage.src = dataUrl;
-  mobileScreen.classList.remove("hidden");
-
-  // 5) Après “Done ✦” → ouvrir Twitter
-  closeBtn.onclick = () => {
-    mobileScreen.classList.add("hidden");
-    window.open(tweetUrl, "_blank");
-  };
-
-  return;
-}
-  
-}
-
-render();
-</script>
-
-</body>
+    <!-- App Script -->
+    <script src="js/app.js"></script>
+  </body>
 </html>

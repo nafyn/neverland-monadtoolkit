@@ -1,0 +1,12 @@
+User-agent: *
+Allow: /
+
+# Block common security scanning paths
+Disallow: /.env
+Disallow: /.git/
+Disallow: /api/
+Disallow: /graphql
+Disallow: /swagger
+Disallow: /actuator/
+
+Sitemap: https://toolkit.neverland.money/sitemap.xml

@@ -1,0 +1,27 @@
+{
+  "name": "Monad Day 1",
+  "short_name": "Monad Day 1",
+  "description": "Build your personalized Monad Mainnet Day 1 Toolkit",
+  "start_url": "/neverland-monadtoolkit/",
+  "display": "standalone",
+  "background_color": "#200041",
+  "theme_color": "#D767FF",
+  "icons": [
+    {
+      "src": "web-app-manifest-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "web-app-manifest-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    },
+    {
+      "src": "icon0.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
