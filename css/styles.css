@@ -1,0 +1,40 @@
+body {
+  background: linear-gradient(116deg, #200041, #10002c 50%, #2e0958);
+  background-attachment: fixed;
+  font-family: "Quicksand", system-ui, sans-serif;
+}
+
+#result-card {
+  transition: box-shadow 0.18s ease-out;
+}
+
+#result-card:hover {
+  box-shadow: 0 0 12px rgba(215, 103, 255, 0.28);
+}
+
+@keyframes pulse-glow {
+  0%,
+  100% {
+    box-shadow: 0 0 20px rgba(199, 87, 216, 0.35);
+  }
+  50% {
+    box-shadow: 0 0 22px rgba(199, 87, 216, 0.42);
+  }
+}
+
+#result-card.completed {
+  animation: pulse-glow 3s ease-in-out infinite;
+}
+
+/* Font utility classes */
+.font-quicksand {
+  font-family: "Quicksand", sans-serif;
+}
+
+.font-cinzel {
+  font-family: "Cinzel", serif;
+}
+
+.font-cinzel-decorative {
+  font-family: "Cinzel Decorative", serif;
+}
