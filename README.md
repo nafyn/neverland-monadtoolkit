@@ -40,6 +40,7 @@ Build your personalized Monad Mainnet Day 1 Toolkit. Select your favorite DeFi p
 - **JavaScript** - Vanilla ES6+
 - **html2canvas** - Canvas image generation
 - **Google Fonts** - Cinzel, Cinzel Decorative, Quicksand
+- **serve** - Modern static file server (by Vercel)
 - **Node.js** - Build tooling
 
 ## 📦 Project Structure
@@ -187,20 +188,13 @@ Or watch for changes during development:
 npm run watch:css
 ```
 
-4. Open `index.html` in your browser:
+4. Start the development server:
 
 ```bash
-# Using Python
-python -m http.server 8000
-
-# Using Node.js
-npx serve
-
-# Or simply open the file
-open index.html
+npm start
 ```
 
-3. Navigate to `http://localhost:8000` (if using a local server)
+This will start a local server on `http://localhost:8080` using [serve](https://github.com/vercel/serve) (by Vercel).
 
 ### Deployment
 
