@@ -58,6 +58,7 @@ const groups = {
     ],
     "Gaming & AI": [
       { name: "Breath of Estova", logo: "breath-of-estova" },
+      { name: "Fluffle", logo: "fluffle" },
       { name: "Jenius", logo: "jenius" },
       { name: "Lumiterra", logo: "lumiterra" },
     ],
